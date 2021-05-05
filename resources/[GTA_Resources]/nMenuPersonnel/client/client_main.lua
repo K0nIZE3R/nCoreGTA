@@ -7,7 +7,7 @@ AddEventHandler("GTA_Interaction:UpdateInfoPlayers", function(identiter, banque)
     config.joueurs.age = identiter["age"] 
     config.joueurs.origine = identiter["origine"]
 
-	print(identiter["nom"] , identiter["prenom"], identiter["age"], identiter["origine"])
+	--print(identiter["nom"] , identiter["prenom"], identiter["age"], identiter["origine"])
 
 	config.joueurs.argentBanque = banque
 	mainMenu.Title = config.joueurs.nom .. " ".. config.joueurs.prenom

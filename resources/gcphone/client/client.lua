@@ -29,7 +29,7 @@ local currentPlaySound = false
 local soundDistanceMax = 8.0
 
 function hasPhone(cb)
-  if (exports.nMenuPersonnel:getQuantity(15) > 0) then return cb(true) else cb(false) end
+  --if (exports.nMenuPersonnel:getQuantity(15) > 0) then return cb(true) else cb(false) end
 end
 
 function NoPhoneFound()

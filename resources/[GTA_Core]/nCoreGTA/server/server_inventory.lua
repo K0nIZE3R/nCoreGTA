@@ -1,5 +1,10 @@
 local items = config.itemList
 
+
+local __RoundNumber = function(value, numDecimalPlaces)
+	return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", value))
+end
+
 --[=====[
     	Parameter : 
         id : unique id of the player.
@@ -8,29 +13,36 @@ local items = config.itemList
         count : number of item.
 ]=====]
 RegisterNetEvent("GTA:RemoveItem")
-AddEventHandler("GTA:RemoveItem", function(id, item, itemid, count) 
-    RemoveItem(id, item, itemid, count)
-end)
-function RemoveItem(id, item, itemid, count)
+AddEventHandler("GTA:RemoveItem", function(item, itemid, count) 
+    local source = source
     if items[item] ~= nil then
-        if PlayersSource[id].inventaire[itemid] ~= nil then -- Item do not exist in inventory
-            if PlayersSource[id].inventaire[itemid].count - count <= 0 then -- If count < or = 0 after removing item count, then deleting it from player inv
-                PlayersSource[id].inventaire[itemid] = nil
+        if PlayersSource[source].inventaire[itemid] ~= nil then -- Item do not exist in inventory
+            if  PlayersSource[source].inventaire[itemid].count - __RoundNumber(count) <= 0 then -- If count < or = 0 after removing item count, then deleting it from player inv
+                PlayersSource[source].inventaire[itemid].count = 0
             else
-                PlayersSource[id].inventaire[itemid].count = PlayersSource[id].inventaire[itemid].count - count
+                PlayersSource[source].inventaire[itemid].count = PlayersSource[source].inventaire[itemid].count - __RoundNumber(count)
             end
 
-            TriggerClientEvent("NUI-Notification", id, {"Vous avez jeter x" ..count.. " "..items[item].label})
-            TriggerClientEvent("GTA:Refreshinventaire", id, PlayersSource[id].inventaire, GetInvWeight(PlayersSource[id].inventaire))
-            return true
-        else
-            return false
+            TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
         end
-    else
-        return false
     end
-end
+end)
 
+
+
+--[=====[
+    Permet de get la qty d'item que vous avez sur vous :
+]=====]
+RegisterNetEvent("GTA:GetItemQty")
+AddEventHandler("GTA:GetItemQty", function(source, item_name, callback)
+    if items[item_name] ~= nil then
+        for _,v in pairs(PlayersSource[source].inventaire) do
+            if v.item == item_name then
+                callback(v.count, v.itemId) 
+            end
+        end
+    end
+end)
 
 --[=====[
     	Parameter : 
@@ -38,38 +50,35 @@ end
         item : item name exemple : pistol.
         count : number of item.
 ]=====]
-RegisterNetEvent("GTA:AddItem")
-AddEventHandler("GTA:AddItem", function(id, item, count, args) 
-    AddItem(id, item, count, args)
-end)
-function AddItem(id, item, count, args)
+RegisterNetEvent("GTA:ReceiveItem")
+AddEventHandler("GTA:ReceiveItem", function(item, count, args) 
+    local src = source
     if items[item] ~= nil then
-        local exist, itemid = DoesItemExistWithArg(id, item, args)
-        local iWeight = GetInvWeight(PlayersSource[id].inventaire)
-        if iWeight + (items[item].weight * count) <= config.maxWeight then
+        local exist, itemid = DoesItemExistWithArg(src, item, args)
+        local iWeight = GetInvWeight(PlayersSource[src].inventaire)
+
+        if iWeight + (items[item].weight * __RoundNumber(count)) <= config.maxWeight then
             if not exist then
                 itemid = GenerateItemId()
-                PlayersSource[id].inventaire[itemid] = {}
-                PlayersSource[id].inventaire[itemid].item = item
-                PlayersSource[id].inventaire[itemid].label = items[item].label
-                PlayersSource[id].inventaire[itemid].count = count
-                PlayersSource[id].inventaire[itemid].itemId = itemid
-                PlayersSource[id].inventaire[itemid].args = {}
+                PlayersSource[src].inventaire[itemid] = {}
+                PlayersSource[src].inventaire[itemid].item = item
+                PlayersSource[src].inventaire[itemid].label = items[item].label
+                PlayersSource[src].inventaire[itemid].count =  __RoundNumber(count)
+                PlayersSource[src].inventaire[itemid].itemId = itemid
+                PlayersSource[src].inventaire[itemid].args = {}
                 if args ~= nil then
-                    PlayersSource[id].inventaire[itemid].args = args
+                    PlayersSource[src].inventaire[itemid].args = args
                 end
             else
-                PlayersSource[id].inventaire[itemid].count = PlayersSource[id].inventaire[itemid].count + count
+                PlayersSource[src].inventaire[itemid].count =  PlayersSource[src].inventaire[itemid].count +  __RoundNumber(count)
             end
-            TriggerClientEvent("NUI-Notification", id, {"Vous avez reçu x" ..count.. " "..items[item].label})
-            TriggerClientEvent("GTA:Refreshinventaire", id, PlayersSource[id].inventaire, GetInvWeight(PlayersSource[id].inventaire))
-            return true
+            TriggerClientEvent("NUI-Notification", src, {"Vous avez reçu x" ..count.. " "..items[item].label})
+            TriggerClientEvent("GTA:Refreshinventaire", src, PlayersSource[src].inventaire, GetInvWeight(PlayersSource[src].inventaire))
         else
-            TriggerClientEvent("NUI-Notification", id, {"Quantité maximum atteind.", "warning"})
-            return false
+            TriggerClientEvent("NUI-Notification", src, {"Quantité maximum atteind.", "warning"})
         end
     end
-end
+end)
 
 
 --[=====[
@@ -79,6 +88,8 @@ end
         item : item name exemple : pistol.
         count : number of item.
 ]=====]
+
+--[[  --> A REWORK :
 RegisterNetEvent("GTA:GiveItem")
 AddEventHandler("GTA:GiveItem", function(id, target, item, count, args, itemid) 
     GiveItem(id, target, item, count, args, itemid)
@@ -93,7 +104,7 @@ function GiveItem(id, target, item, count, args, itemid)
                 return
             else
                 if PlayersSource[id].inventaire[itemid].count - count <= 0 then
-                    PlayersSource[id].inventaire[itemid] = nil
+                    PlayersSource[id].inventaire[itemid].count = 0
                 else
                     PlayersSource[id].inventaire[itemid].count = PlayersSource[id].inventaire[itemid].count - count
                 end
@@ -102,7 +113,7 @@ function GiveItem(id, target, item, count, args, itemid)
             end
 
             -- Adding item to target
-            local exist, itemid = DoesItemExistWithArg(id, item, args)
+            local exist, itemid = DoesItemExistWithArg(item, args)
             if not exist then
                 itemid = GenerateItemId()
                 PlayersSource[target].inventaire[itemid] = {}
@@ -124,21 +135,10 @@ function GiveItem(id, target, item, count, args, itemid)
         end
     end
 end
+]]
 
---[[ 
-id = player id
-itemId = itemID of the item targeted
-arg = item args
-]]--
-function SetItemArg(id, itemId, arg)
-    for k,v in pairs(PlayersSource[id].inventaire) do
-        if v.itemId == itemId then
-            v.args = arg
-        end
-    end
 
-    TriggerClientEvent("GTA:Refreshinventaire", id, PlayersSource[id].inventaire, GetInvWeight(PlayersSource[id].inventaire))
-end
+
 
 --[[ 
 return generated item id
@@ -147,14 +147,27 @@ function GenerateItemId()
     return ""..tostring(math.random(100001,900009)).."-"..tostring(math.random(100001,900009)).."-"..tostring(math.random(100001,900009))
 end
 
---[[ 
+
+------------------------------------------------------- :
+-----------------------INVENTAIRE---------------------- :
+------------------------------------------------------- :
+--[[
 id = player id
 item = item name to check
 arg = item args
 ]]--
-function DoesItemExistWithArg(id, item, arg)
+
+function GetInvWeight(inv)
+    local countWeight = 0
+    for _,v in pairs(inv) do
+        countWeight = items[v.item].weight * v.count
+    end
+    return countWeight
+end
+
+function DoesItemExistWithArg(source, item, arg)
     if arg == nil then arg = {} end
-    for k,v in pairs(PlayersSource[id].inventaire) do
+    for k,v in pairs(PlayersSource[source].inventaire) do
         if v.item == item then
             if json.encode(v.args) == json.encode(arg) then
                 return true, v.itemId
@@ -163,3 +176,28 @@ function DoesItemExistWithArg(id, item, arg)
     end
     return false
 end
+
+RegisterNetEvent("GTA_Inventaire:DoesItemExist")
+AddEventHandler("GTA_Inventaire:DoesItemExist", function(source, item, callback) 
+    for _,v in pairs(PlayersSource[source].inventaire) do
+        if v.item == item then
+            callback(v.itemId) 
+        end
+    end
+end)
+
+--[[ 
+id = player id
+itemId = itemID of the item targeted
+arg = item args
+]]--
+function SetItemArg(source, itemId, arg)
+    for k,v in pairs(PlayersSource[source].inventaire) do
+        if v.itemId == itemId then
+            v.args = arg
+        end
+    end
+
+    TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
+end
+

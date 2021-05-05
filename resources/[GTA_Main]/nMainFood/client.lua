@@ -14,9 +14,9 @@ end)
 
 -- Refresh les nouvel valeur faim/soif
 RegisterNetEvent("GTA:UpdateHungerStat")
-AddEventHandler("GTA:UpdateHungerStat", function(faim, water)
+AddEventHandler("GTA:UpdateHungerStat", function(faim, soif)
 	SetCalories(faim)
-	SetWater(water)
+	SetWater(soif)
 end)
 
 -- CALORIES
@@ -60,13 +60,13 @@ function RemoveCalories(calories)
 	elseif pFaim == 0 then
 		SetEntityHealth(GetPlayerPed(-1), 0)
 	end
-	TriggerServerEvent("nSetFaim", exports.nCoreGTA:GetPlayerUniqueId(), pFaim)
+	TriggerServerEvent("nSetFaim", pFaim)
 end
 
 -- WATER
 function SetWater(water)
 	pSoif = water
-	TriggerServerEvent("nSetSoif",exports.nCoreGTA:GetPlayerUniqueId(), pSoif)
+	TriggerServerEvent("nSetSoif", pSoif)
 end
 
 function AddWater(water)
@@ -77,7 +77,7 @@ function AddWater(water)
 		pSoif = 100
 	end
 	
-	TriggerServerEvent("nSetSoif",exports.nCoreGTA:GetPlayerUniqueId(), pSoif)
+	TriggerServerEvent("nSetSoif", pSoif)
 
 	Citizen.CreateThread(function()
 		RequestAnimDict('amb@world_human_drinking_fat@beer@male@idle_a')
@@ -103,7 +103,7 @@ function RemoveWater(water)
 	elseif pSoif == 0 then
 		SetEntityHealth(GetPlayerPed(-1), 0)
 	end
-	TriggerServerEvent("nSetSoif", exports.nCoreGTA:GetPlayerUniqueId(), pSoif)
+	TriggerServerEvent("nSetSoif", pSoif)
 end
 
 RegisterNetEvent("nAddFaim")

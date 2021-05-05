@@ -1,5 +1,5 @@
 --[[
-RegisterServerEvent('GTA:GetAllHandleItems')  --> cette event sert uniquement a get toute les items de l'inventaire d'une source ou target pour l'afficher par exemple sur un menu.
+RegisterNetEvent('GTA:GetAllHandleItems')  --> cette event sert uniquement a get toute les items de l'inventaire d'une source ou target pour l'afficher par exemple sur un menu.
 AddEventHandler('GTA:GetAllHandleItems', function(handle, callback)
     local items = {}
     local source = handle
@@ -22,7 +22,7 @@ AddEventHandler('GTA:GetAllHandleItems', function(handle, callback)
 end)
 
 
-RegisterServerEvent('GTA:GetUserQtyItem')  --> cette event sert uniquement a get la quantité d'un item server-side.
+RegisterNetEvent('GTA:GetUserQtyItem')  --> cette event sert uniquement a get la quantité d'un item server-side.
 AddEventHandler('GTA:GetUserQtyItem', function(source, itemID, callback)
 	local source = source
 	local license = GetPlayerIdentifiers(source)[1]
@@ -39,7 +39,7 @@ AddEventHandler('GTA:GetUserQtyItem', function(source, itemID, callback)
 end)
 
 
-RegisterServerEvent('GTA:GetMaxQtyItems')  --> cette event sert uniquement a get le max de quantité de l'item saisit.
+RegisterNetEvent('GTA:GetMaxQtyItems')  --> cette event sert uniquement a get le max de quantité de l'item saisit.
 AddEventHandler('GTA:GetMaxQtyItems', function(itemID, callback)
     local source = source
     local item_name = ""
@@ -59,7 +59,7 @@ end)
 --[=====[
         Return le sex de votre perso :
 ]=====]
-RegisterServerEvent('GTA:GetUserSex')  --> cette event sert uniquement a get la quantité d'un item server-side.
+RegisterNetEvent('GTA:GetUserSex')  --> cette event sert uniquement a get la quantité d'un item server-side.
 AddEventHandler('GTA:GetUserSex', function(license, callback)
 	MySQL.Async.fetchAll("SELECT sex FROM gta_joueurs_humain WHERE license = @username", {['@username'] = license}, function(res)
 		if(res[1].sex ~= nil) then
@@ -74,11 +74,12 @@ end)
 --[=====[
         Salaire toute les 15 minutes:
 ]=====]
-RegisterServerEvent('GTA:salaire')
-AddEventHandler('GTA:salaire', function(id)
+RegisterNetEvent('GTA:salaire')
+AddEventHandler('GTA:salaire', function()
 	local source = source
+    local license = GetPlayerIdentifiers(source)[1]
 
-	MySQL.Async.fetchAll('SELECT salaire FROM gta_joueurs INNER JOIN gta_metiers ON gta_joueurs.job = gta_metiers.metiers WHERE id = @id',{['@id'] = id}, function(res)
+	MySQL.Async.fetchAll('SELECT salaire FROM gta_joueurs INNER JOIN gta_metiers ON gta_joueurs.job = gta_metiers.metiers WHERE license = @license',{['@license'] = license}, function(res)
 		PlayersSource[id].banque = PlayersSource[id].banque + res[1].salaire
 		TriggerClientEvent('GTA:AfficherBanque', source, PlayersSource[id].banque)
 		TriggerClientEvent("GTAO:NotificationIcon", source, "CHAR_BANK_MAZE", "Maze Bank", "+ : ~g~" ..res[1].salaire.. " $", "Salaire reçu")
@@ -89,13 +90,13 @@ end)
 --[=====[
         Food :
 ]=====]
-RegisterServerEvent("nSetFaim")
+RegisterNetEvent("nSetFaim")
 AddEventHandler("nSetFaim", function(faim)
 	local source = source
 	PlayersSource[source].faim = faim
 end)
 
-RegisterServerEvent("nSetSoif")
+RegisterNetEvent("nSetSoif")
 AddEventHandler("nSetSoif", function(soif)
 	local source = source
 	PlayersSource[source].soif = soif
@@ -104,7 +105,7 @@ end)
 --[=====[
     	Sauvegarde de la pos du joueur : 
 ]=====]
-RegisterServerEvent("GTA:SavePos")
+RegisterNetEvent("GTA:SavePos")
 AddEventHandler("GTA:SavePos", function(pos)
 	local source = source
     PlayersSource[source].pos = pos
@@ -116,7 +117,7 @@ end)
 --[=====[
     	Changement d'identité :
 ]=====]
-RegisterServerEvent("GTA:UpdateIdentiter")
+RegisterNetEvent("GTA:UpdateIdentiter")
 AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
 	local source = source
 	if nom ~= nil then PlayersSource[source].identiter.nom = nom end
@@ -128,8 +129,8 @@ AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
 		["nom"] = PlayersSource[source].identiter.nom,
 		["prenom"] = PlayersSource[source].identiter.prenom,
 		["age"] = PlayersSource[source].identiter.age,
-		["origine"] = PlayersSource[source].identiter.origine,
+		["origine"] = PlayersSource[source].identiter.origine
 	}
-	local encodeIdentiter = json.encode(t)
-	TriggerClientEvent("GTA:RefreshPlayerInfo", source, encodeIdentiter)
+
+	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayers", source, t)
 end)

@@ -21,14 +21,8 @@ USE `gta_serveur`;
 DROP TABLE IF EXISTS `gta_joueurs`;
 CREATE TABLE IF NOT EXISTS `gta_joueurs` (
   `license` varchar(50) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
-  `banque` int(11) DEFAULT NULL,
+  `banque` int(11) DEFAULT 0,
   `job` varchar(255) COLLATE utf8mb4_bin DEFAULT 'Chomeur',
-  `isFirstConnection` tinyint(1) NOT NULL DEFAULT 1,
-  `nom` varchar(128) COLLATE utf8mb4_bin NOT NULL DEFAULT 'Sans Nom',
-  `prenom` varchar(128) COLLATE utf8mb4_bin NOT NULL DEFAULT 'Sans Prenom',
-  `taille` int(10) unsigned NOT NULL DEFAULT 0,
-  `age` int(120) NOT NULL DEFAULT 0,
-  `origine` varchar(50) COLLATE utf8mb4_bin DEFAULT 'Citoyen',
   `faim` int(11) DEFAULT 100,
   `soif` int(11) DEFAULT 100,
   `isAdmin` tinyint(1) DEFAULT 0,
@@ -36,8 +30,10 @@ CREATE TABLE IF NOT EXISTS `gta_joueurs` (
   `lastpos` varchar(255) COLLATE utf8mb4_bin DEFAULT '{-887.48388671875, -2311.68872070313,  -3.50776553153992}',
   `grade` varchar(255) COLLATE utf8mb4_bin DEFAULT 'Aucun',
   `phone_number` varchar(10) COLLATE utf8mb4_bin DEFAULT NULL,
-  PRIMARY KEY (`license`),
-  KEY `faim_soif` (`faim`,`soif`)
+  `inventaire` text COLLATE utf8mb4_bin NOT NULL,
+  `identiter` text COLLATE utf8mb4_bin NOT NULL,
+  `isFirstConnexion` tinyint(1) DEFAULT 1,
+  KEY `KEY` (`license`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- Listage des données de la table gta_serveur.gta_joueurs : ~0 rows (environ)
@@ -161,43 +157,6 @@ INSERT INTO `gta_metiers` (`metiers`, `salaire`, `emploi`) VALUES
 	('Medic', 500, 'priver');
 /*!40000 ALTER TABLE `gta_metiers` ENABLE KEYS */;
 
--- Listage de la structure de la table gta_serveur. items
-DROP TABLE IF EXISTS `items`;
-CREATE TABLE IF NOT EXISTS `items` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `libelle` varchar(255) DEFAULT NULL,
-  `isUsable` tinyint(1) DEFAULT 1,
-  `type` tinyint(3) NOT NULL DEFAULT 0,
-  `max_qty` bigint(20) DEFAULT 100,
-  KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
-
--- Listage des données de la table gta_serveur.items : ~21 rows (environ)
-/*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` (`id`, `libelle`, `isUsable`, `type`, `max_qty`) VALUES
-	(1, 'Pistolet', 1, 3, 2),
-	(2, '9mm', 1, 3, 100),
-	(3, 'Marteau', 1, 3, 100),
-	(4, 'Batte', 1, 3, 100),
-	(5, 'Pied-de-biche', 1, 3, 100),
-	(6, 'Couteau', 1, 3, 100),
-	(7, 'Menotte', 1, 0, 100),
-	(8, 'Hache', 1, 3, 100),
-	(9, 'Machette', 1, 3, 100),
-	(10, 'Poing-américain', 1, 3, 100),
-	(11, 'Tazer', 1, 3, 100),
-	(12, 'Matraque', 1, 3, 100),
-	(13, 'Seringe-Adrenaline', 1, 4, 100),
-	(14, 'Soda', 1, 1, 100),
-	(15, 'Téléphone', 1, 0, 100),
-	(16, 'Pain', 1, 2, 100),
-	(17, 'Eau', 1, 1, 100),
-	(18, 'Argent-Propre', 1, 0, 2147483647),
-	(19, 'Argent-Sale', 1, 0, 2147483647),
-	(20, 'Uzi', 1, 3, 2),
-	(21, 'Munition Smg', 1, 3, 999);
-/*!40000 ALTER TABLE `items` ENABLE KEYS */;
-
 -- Listage de la structure de la table gta_serveur. phone_app_chat
 DROP TABLE IF EXISTS `phone_app_chat`;
 CREATE TABLE IF NOT EXISTS `phone_app_chat` (
@@ -258,22 +217,6 @@ CREATE TABLE IF NOT EXISTS `phone_users_contacts` (
 -- Listage des données de la table gta_serveur.phone_users_contacts : 0 rows
 /*!40000 ALTER TABLE `phone_users_contacts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `phone_users_contacts` ENABLE KEYS */;
-
--- Listage de la structure de la table gta_serveur. user_inventory
-DROP TABLE IF EXISTS `user_inventory`;
-CREATE TABLE IF NOT EXISTS `user_inventory` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `item_id` int(11) NOT NULL DEFAULT 0,
-  `quantity` bigint(20) unsigned NOT NULL DEFAULT 0,
-  `license` varchar(50) NOT NULL DEFAULT '0',
-  UNIQUE KEY `item_id_license` (`item_id`,`license`) USING BTREE,
-  KEY `id` (`id`),
-  CONSTRAINT `FK_user_inventory_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Listage des données de la table gta_serveur.user_inventory : ~0 rows (environ)
-/*!40000 ALTER TABLE `user_inventory` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_inventory` ENABLE KEYS */;
 
 -- Listage de la structure de la table gta_serveur. vehicle_inventory
 DROP TABLE IF EXISTS `vehicle_inventory`;

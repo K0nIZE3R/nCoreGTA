@@ -19,10 +19,6 @@ local item = {
 
 RegisterNetEvent("GTA:UpdateInventaire")
 AddEventHandler("GTA:UpdateInventaire", function(inv, weight)
-    LiveRefreshMenu(inv, weight, nil, nil)
-end)
-
-function LiveRefreshMenu(inv, weight)
     if inv ~= nil then pInv = inv end
     if weight ~= nil then pWeight = weight end
 
@@ -31,7 +27,7 @@ function LiveRefreshMenu(inv, weight)
             item.count = v.count
         end
     end
-end
+end)
 
 Citizen.CreateThread(function()
     while (true) do
@@ -39,12 +35,11 @@ Citizen.CreateThread(function()
         RageUI.IsVisible(mainMenu, function()
             RageUI.Button('Inventaire', "", {}, true, {
                 onSelected = function()
-                inf = exports.nCoreGTA:GetPlayerInv()
-                --inf = exports.nCoreGTA:GetPlayerInv()
-                pInv = inf.inventaire
-                pWeight = inf.weight or 0
+                playerInventaire = exports.nCoreGTA:GetPlayerInv()
+                pInv = playerInventaire.inventaire
+                pWeight = playerInventaire.weight or 0
                 --TriggerEvent("GTA:LoadWeaponPlayer")
-            end}, subInventaire);
+            end}, subInventaire)
 
             RageUI.Button('Mon Portefeuille', "", {}, true, {}, subPapiers);
             RageUI.Button('Tenue', "", {}, true, {}, subTenues);
@@ -125,7 +120,8 @@ Citizen.CreateThread(function()
                                 elseif Index == 3 then
                                     local count = KeyboardAmount()
                                     if count ~= nil and count > 0 and count <= item.count then
-                                        TriggerServerEvent("GTA:RemoveItem", exports.nCoreGTA:GetPlayerUniqueId(), item.item, item.id, count)
+                                        TriggerServerEvent("GTA:RemoveItem", item.item, item.id, count)
+                                        TriggerEvent("NUI-Notification", {"Vous avez jeter x" ..count.. " "..item.label})
                                     end
 
                                     --[[ 

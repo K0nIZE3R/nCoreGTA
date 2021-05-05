@@ -4,7 +4,7 @@ game 'gta5'
 server_scripts {
     '@mysql-async/lib/MySQL.lua',
     'config/config.lua',
-    'server/player.lua',
+    'server/server_main.lua',
     'server/whitelist.lua',
     'server/admin_command.lua',
     'server/server_inventory.lua',
@@ -16,7 +16,7 @@ server_scripts {
 client_scripts {
     'config/config.lua',
     'client_main/admin_main.lua',
-    'client_main/spawn.lua',
+    'client_main/client_main.lua',
     'client_main/getter_player.lua',
     'client_main/coma.lua',
     'synchronisation/client.lua',
@@ -30,7 +30,8 @@ exports {
     "GetPlayerInv",
     "GetPlayerUniqueId",
     "GetIsPlayerAdmin",
-    "GetPlayerJobGrade"
+    "GetPlayerJobGrade",
+    "IsPlayerLoaded"
 }
 
 

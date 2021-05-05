@@ -6,21 +6,21 @@ Citizen.CreateThread(function()
 		RageUI.IsVisible(mainMenu, function()
             RageUI.Button('Retirer', "", {}, true, { 
 			onSelected = function()
-				local quantityMoneyitems = InputNombre("Somme d'argent à retirer :")
-				if tonumber(quantityMoneyitems) == nil then
+				local nb = GetInputNumber(0)
+				if tonumber(nb) == nil then
 	                TriggerEvent("NUI-Notification", {"Veuillez saisir un nombre correct. ", "warning"})
 					return nil
 				end
-				TriggerServerEvent("nBanqueSolde:PermissionRABanque", quantityMoneyitems)
+				TriggerServerEvent("nBanqueSolde:PermissionRABanque", nb)
 			end});
 			 
 			RageUI.Button('Deposer', "", {}, true, { onSelected = function()
-				local quantityMoneyBanqueitems = InputNombre("Somme d'argent à déposer :")
-				if tonumber(quantityMoneyBanqueitems) == nil then
+				local nb = GetInputNumber(0)
+				if not tonumber(nb) or tonumber(nb) == nil then
 	                TriggerEvent("NUI-Notification", {"Veuillez saisir un nombre correct. ", "warning"})
 					return nil
 				end
-				TriggerServerEvent("nBanqueSolde:PermissionDABanque", quantityMoneyBanqueitems)
+				TriggerServerEvent("nBanqueSolde:PermissionDABanque", nb)
 			 end});
 			 
 			RageUI.Button('Solde', "", {}, true, { onSelected = function()

@@ -74,7 +74,7 @@ end, false)
 --> /give "item_name" montant
 RegisterCommand("give", function(source, args, rawCommand)
     if (GetIsPlayerAdmin() == true) then
-        TriggerServerEvent("GTA:AddItem", GetPlayerUniqueId(), args[1], tonumber(args[2]))
+        TriggerServerEvent("GTA:ReceiveItem", args[1], tonumber(args[2]))
     end
 end, false)
 
@@ -164,15 +164,4 @@ Citizen.CreateThread(function ()
 		   waitEnablePostition = 1000
         end
     end 
-end)
-
-
-
---> Executer une fois la ressource restart : 
-AddEventHandler('onResourceStart', function(resourceName)
-    if (GetCurrentResourceName() ~= resourceName) then
-        return
-	end
-
-    TriggerServerEvent("GTA:CheckAdmin")
 end)

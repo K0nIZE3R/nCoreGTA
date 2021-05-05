@@ -1,95 +1,8 @@
  --||@SuperCoolNinja. && RamexDeltaXOO||--
 local waitBanque = 1000
 activeSolde = false
---something, CashAmount = StatGetInt("MP0_WALLET_BALANCE",-1)
 something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
 
-RegisterNetEvent('nBanqueSolde:CRender')
-AddEventHandler('nBanqueSolde:CRender', function()
-	activeSolde = true
-	--something, CashAmount = StatGetInt("MP0_WALLET_BALANCE",-1)
-	something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
-end)
-
-function Ninja_Core__DisplayHelpAlert(msg)
-	BeginTextCommandDisplayHelp("STRING");  
-    AddTextComponentSubstringPlayerName(msg);  
-    EndTextCommandDisplayHelp(0, 0, 1, -1);
-end
-
-function InputNombre(reason)
-	local text = ""
-	AddTextEntry('nombre', reason)
-    DisplayOnscreenKeyboard(1, "nombre", "", "", "", "", "", 4)
-    while (UpdateOnscreenKeyboard() == 0) do
-        DisableAllControlActions(0)
-        Wait(10)
-    end
-    if (GetOnscreenKeyboardResult()) then
-        text = GetOnscreenKeyboardResult()
-    end
-    return text
-end
-
-function DrawAdvancedText(x,y ,w,h,sc, text, r,g,b,a,font,jus)
-	SetTextFont(font)
-	SetTextProportional(0)
-	SetTextScale(sc, sc)
-	N_0x4e096588b13ffeca(jus)
-	SetTextColour(r, g, b, a)
-	SetTextDropShadow(0, 0, 0, 0,255)
-	SetTextEdge(1, 0, 0, 0, 255)
-	SetTextDropShadow()
-	SetTextOutline()
-	SetTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawText(x - 0.1+w, y - 0.02+h)
-end
-
-function RenderSolde()
-	DrawRect(0.912000000000001, 0.292, 0.185, 0.205, 0, 0, 0, 180)
-	DrawAdvancedText(0.966000000000001, 0.220, 0.005, 0.0028, 0.5, "~h~Votre Solde:", 255, 255, 255, 255, 0, 1)
-	DrawAdvancedText(0.924000000000001, 0.278, 0.005, 0.0028, 0.4, "~w~Banque ~b~" ..BankAmount .."~g~$",255, 255, 255, 255, 0, 1)
-	--DrawAdvancedText(0.924000000000001, 0.322, 0.005, 0.0028, 0.4, "~w~Cash ~b~" ..CashAmount.."~g~$", 255, 255, 255, 255, 0, 1)
-end
-
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(waitBanque)
-		if activeSolde then
-	                waitBanque = 1
-			RenderSolde()
-		else
-		        waitBanque = 1000
-		end
-	end
-end)
-
-Citizen.CreateThread(function()
-	while true do
-		Citizen.Wait(waitBanque)
-		if activeSolde then
-			Wait(10000)
-			activeSolde = false
-		end
-	end
-end)
-
-
-function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
-	SetTextFont(font)
-	SetTextProportional(0)
-	SetTextScale(scale, scale)
-	SetTextColour(r, g, b, a)
-	SetTextDropShadow(0, 0, 0, 0,255)
-	SetTextEdge(1, 0, 0, 0, 255)
-	SetTextDropShadow()
-	SetTextOutline()
-	SetTextCentre(centre)
-	SetTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawText(x , y)
-end
 
 atms = {
     {x=-386.733, y=6045.953, z=31.501},
@@ -144,3 +57,110 @@ Citizen.CreateThread(function()
       EndTextCommandSetBlipName(item.blip)
     end
 end)
+
+
+RegisterNetEvent('nBanqueSolde:CRender')
+AddEventHandler('nBanqueSolde:CRender', function()
+	activeSolde = true
+	something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
+end)
+
+RegisterNetEvent('GTA_Banque:ClientDeposerArgentBanque')
+AddEventHandler('GTA_Banque:ClientDeposerArgentBanque', function(itemname, itemid, valeur)
+    TriggerServerEvent("GTA:RemoveItem", itemname, itemid, valeur)
+	TriggerServerEvent("GTA:DeposerArgentBanque", valeur)
+	TriggerEvent("NUI-Notification", {"Vous avez déposé : " ..valeur.. "$"})
+end)
+
+RegisterNetEvent('GTA_Banque:ClientRetirerArgentBanque')
+AddEventHandler('GTA_Banque:ClientRetirerArgentBanque', function(valeur)
+    TriggerServerEvent('GTA:RetirerArgentBanque', valeur)
+    TriggerServerEvent("GTA:ReceiveItem", "cash", valeur)
+	TriggerEvent("NUI-Notification", {"Vous avez retirer : " ..valeur.. "$"})
+end)
+
+
+function Ninja_Core__DisplayHelpAlert(msg)
+	BeginTextCommandDisplayHelp("STRING");  
+    AddTextComponentSubstringPlayerName(msg);  
+    EndTextCommandDisplayHelp(0, 0, 1, -1);
+end
+
+function GetInputNumber(actualNumber)
+    local nb = 0
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TTTIP8", "", "", "", "", "", 20)
+    while (UpdateOnscreenKeyboard() == 0) do
+        DisableAllControlActions(0)
+        Wait(10)
+    end
+    if (GetOnscreenKeyboardResult()) then
+        nb = GetOnscreenKeyboardResult()
+        nb = nb:gsub("[^0-9]", "")
+        nb = tonumber(nb)
+        if nb == nil or nb < 0 then
+           nb = 0
+        end
+    end
+    return nb
+end
+
+function DrawAdvancedText(x,y ,w,h,sc, text, r,g,b,a,font,jus)
+	SetTextFont(font)
+	SetTextProportional(0)
+	SetTextScale(sc, sc)
+	N_0x4e096588b13ffeca(jus)
+	SetTextColour(r, g, b, a)
+	SetTextDropShadow(0, 0, 0, 0,255)
+	SetTextEdge(1, 0, 0, 0, 255)
+	SetTextDropShadow()
+	SetTextOutline()
+	SetTextEntry("STRING")
+	AddTextComponentString(text)
+	DrawText(x - 0.1+w, y - 0.02+h)
+end
+
+function RenderSolde()
+	DrawRect(0.912000000000001, 0.292, 0.185, 0.205, 0, 0, 0, 180)
+	DrawAdvancedText(0.966000000000001, 0.220, 0.005, 0.0028, 0.5, "~h~Votre Solde:", 255, 255, 255, 255, 0, 1)
+	DrawAdvancedText(0.924000000000001, 0.278, 0.005, 0.0028, 0.4, "~w~Banque ~b~" ..BankAmount .."~g~$",255, 255, 255, 255, 0, 1)
+	--DrawAdvancedText(0.924000000000001, 0.322, 0.005, 0.0028, 0.4, "~w~Cash ~b~" ..CashAmount.."~g~$", 255, 255, 255, 255, 0, 1)
+end
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(waitBanque)
+		if activeSolde then
+	        waitBanque = 1
+			RenderSolde()
+		else
+		    waitBanque = 1000
+		end
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(waitBanque)
+		if activeSolde then
+			Wait(10000)
+			activeSolde = false
+		end
+	end
+end)
+
+
+function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
+	SetTextFont(font)
+	SetTextProportional(0)
+	SetTextScale(scale, scale)
+	SetTextColour(r, g, b, a)
+	SetTextDropShadow(0, 0, 0, 0,255)
+	SetTextEdge(1, 0, 0, 0, 255)
+	SetTextDropShadow()
+	SetTextOutline()
+	SetTextCentre(centre)
+	SetTextEntry("STRING")
+	AddTextComponentString(text)
+	DrawText(x , y)
+end
+

@@ -29,6 +29,3 @@ client_scripts {
     'client/client_armes.lua',
     'client/client_menu.lua'
 }
-
-export 'getQuantity'
-export 'notFull'

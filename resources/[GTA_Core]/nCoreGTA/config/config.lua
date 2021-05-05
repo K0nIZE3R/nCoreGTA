@@ -3,7 +3,7 @@ config = {}
 
 config.Player = {}
 
-config.versionCore = "Version 1.5"
+config.versionCore = "Version 1.7"
 config.activerPoliceWanted = false
 config.activerPvp = true 
 config.salaireTime = 900000
@@ -17,9 +17,8 @@ config.argentSale = 150
 config.banque = 5000
 
 
-
 --> List D'Item disponible :
-config.maxWeight = 1 --> Poids.
+config.maxWeight = 40 --> Poids.
 config.itemList = {
     ["pistol"] = {label = "Pistolet", weight = 1, type = 0},
     ["pistol_ammo"] = {label = "9mm", weight = 1, type = 0},
@@ -38,10 +37,21 @@ config.itemList = {
     ["phone"] = {label = "Téléphone", weight = 1, type = 0},
     ["pain"] = {label = "Pain", weight = 1, type = 0},
     ["eau"] = {label = "Eau", weight = 1, type = 0},
-    ["cash"] = {label = "Argent Propre", weight = 1, type = 0},
-    ["dirty"] = {label = "Argent Sale", weight = 1, type = 0},
+    ["cash"] = {label = "Argent Propre", weight = -1, type = 0},
+    ["dirty"] = {label = "Argent Sale", weight = -1, type = 0},
     ["uzi"] = {label = "Uzi", weight = 1, type = 0},
     ["uzi_ammo"] = {label = "Munition Uzi", weight = 1, type = 0},
+}
+
+config.itemDepart = { --> Item reçu a votre arrivé :
+    {
+        ["item_name"] = "cash",
+        ["item_qty"] = config.argentPropre,
+    },
+    {
+        ["item_name"] = "dirty",
+        ["item_qty"] = config.argentSale,
+    }
 }
 
 --> Pour avoir la license du player, faite le connecter une fois au serveur sans qui puisse rejoindre, il sera afficher sur la console.

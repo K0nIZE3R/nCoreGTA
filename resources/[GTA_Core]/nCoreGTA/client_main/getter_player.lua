@@ -26,9 +26,9 @@ function GetPlayerInv()
     return {inventaire = config.Player.inventaire, weight = config.Player.weight}
 end
 
---exports.nCoreGTA:GetPlayerIdentity()
-function GetPlayerIdentity()
-    return config.Player.identiter
+--exports.nCoreGTA:GetIsFirstConnexion()
+function GetIsFirstConnexion()
+    return config.Player.isFirstConnexion
 end
 
 --exports.nCoreGTA:GetIsPlayerAdmin()

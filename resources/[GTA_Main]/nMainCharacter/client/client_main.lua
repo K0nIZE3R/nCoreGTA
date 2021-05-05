@@ -132,13 +132,16 @@ function EndCreation()
 	--> Nouvel position du joueur :
 	SetEntityCoords(playerPed, config.PlayerSpawnPos.x, config.PlayerSpawnPos.y, config.PlayerSpawnPos.z)
 	SetEntityHeading(playerPed, config.PlayerSpawnPos.h)
+
+    PlayerLoaded = true
 	
 	DoScreenFadeIn(1000)
 	Wait(1000)
 	
 	RageUI.Visible(mainMenu, false)
-	DisplayRadar(true)
 
+	DisplayRadar(true)
+	DisplayHud(true)
 	TriggerEvent('EnableDisableHUDFS', true)
 end
 
@@ -286,9 +289,10 @@ end)
 
 RegisterNetEvent("GTA:BeginCreation")
 AddEventHandler("GTA:BeginCreation", function()
-	config.isMenuEnable = true
 	DisplayRadar(false)
+	DisplayHud(false)
 	TriggerEvent('EnableDisableHUDFS', false)
+	config.isMenuEnable = true
 	AnimCam()
 	Visible()
 end)

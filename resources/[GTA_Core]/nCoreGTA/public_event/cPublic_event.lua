@@ -190,45 +190,18 @@ end)
 ]=====]
 RegisterNetEvent("GTA:Refreshinventaire")
 AddEventHandler("GTA:Refreshinventaire", function(inv, weight)
+	--> On passe ici pour update la table inventaire du "getter_player" : GetPlayerInv.
     config.Player.inventaire = inv
     config.Player.weight = weight
     TriggerEvent("GTA:UpdateInventaire", config.Player.inventaire, config.Player.weight)
 end)
-
-
---[=====[
-        Permet de refresh les nouvel donnée de vos stats faim/soif :
-]=====]
-RegisterNetEvent("GTA:RefreshFoodsStat")
-AddEventHandler("GTA:RefreshFoodsStat", function(faim, soif)
-    config.Player.faim = faim
-    config.Player.soif = soif
-    TriggerEvent("GTA:UpdateHungerStat", config.Player.faim, config.Player.soif)
-end)
-
---[=====[
-        Permet de refresh l'identité de votre perso :
-		config.Player.nom = nom
-		config.Player.prenom = prenom
-		config.Player.age = age
-		config.Player.origine = origine
-]=====]
-
-RegisterNetEvent("GTA:RefreshPlayerInfo")
-AddEventHandler("GTA:RefreshPlayerInfo", function(identiter, banque)
-	config.Player.identiter = identiter
-	config.Player.banque = config.Player.banque or banque
-
-    TriggerEvent("GTA_Interaction:UpdateInfoPlayers", config.Player.identiter, config.Player.banque)
-end)
-
-
 
 --[=====[
         Permet de refresh les nouvel donnée de votre argent en banque utile si vous l'afficher :
 ]=====]
 RegisterNetEvent("GTA:AfficherBanque")
 AddEventHandler("GTA:AfficherBanque", function(value)
-	StatSetInt("BANK_BALANCE", value, true)
-    RemoveMultiplayerHudCash(0x968F270E39141ECA)
+	--> On passe ici pour update la valeur de votre argent en banque du "getter_player" : GetPlayerBank.
+	config.Player.banque = value
+	StatSetInt("BANK_BALANCE", config.Player.banque, true)
 end)
