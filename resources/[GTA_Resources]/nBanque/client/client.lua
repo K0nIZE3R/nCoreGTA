@@ -85,7 +85,7 @@ function Ninja_Core__DisplayHelpAlert(msg)
     EndTextCommandDisplayHelp(0, 0, 1, -1);
 end
 
-function GetInputNumber(actualNumber)
+function GetInputNumber()
     local nb = 0
     DisplayOnscreenKeyboard(1, "FMMC_KEY_TTTIP8", "", "", "", "", "", 20)
     while (UpdateOnscreenKeyboard() == 0) do

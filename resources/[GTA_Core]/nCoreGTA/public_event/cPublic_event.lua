@@ -219,6 +219,8 @@ AddEventHandler("GTA:UseItem", function(item_name, itemid)
 				TriggerEvent("GTA_Items_Type:Weapons")
 			elseif v.type == "medical" then 
 				TriggerEvent("GTA_Items_Type:Medics", item_name, itemid)
+			elseif v.type == "vide" then
+				TriggerEvent("NUI-Notification", {"Item inutilisable", "warning"})
 			end
             break
         end

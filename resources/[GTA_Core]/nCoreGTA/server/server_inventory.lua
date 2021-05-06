@@ -90,31 +90,29 @@ end)
         count : number of item.
 ]=====]
 
---[[  --> A REWORK :
+
 RegisterNetEvent("GTA:GiveItem")
-AddEventHandler("GTA:GiveItem", function(id, target, item, count, args, itemid) 
-    GiveItem(id, target, item, count, args, itemid)
-end)
-function GiveItem(id, target, item, count, args, itemid)
+AddEventHandler("GTA:GiveItem", function(target, item, itemid, count, args) 
+    local src = source
     if items[item] ~= nil then
         local tWeight = GetInvWeight(PlayersSource[target].inventaire)
         if tWeight + (items[item].weight * count) <= config.maxWeight then
 
             -- Removing item from source
-            if PlayersSource[id].inventaire[itemid] == nil then
+            if PlayersSource[src].inventaire[itemid] == nil then
                 return
             else
-                if PlayersSource[id].inventaire[itemid].count - count <= 0 then
-                    PlayersSource[id].inventaire[itemid].count = 0
+                if PlayersSource[src].inventaire[itemid].count - count <= 0 then
+                    PlayersSource[src].inventaire[itemid].count = 0
                 else
-                    PlayersSource[id].inventaire[itemid].count = PlayersSource[id].inventaire[itemid].count - count
+                    PlayersSource[src].inventaire[itemid].count = PlayersSource[src].inventaire[itemid].count - count
                 end
-                TriggerClientEvent("NUI-Notification", id, {"Vous avez donner x" ..count.. " "..items[item].label})
-                TriggerClientEvent("GTA:Refreshinventaire", id, PlayersSource[id].inventaire, GetInvWeight(PlayersSource[id].inventaire))
+                TriggerClientEvent("NUI-Notification", src, {"Vous avez donner x" ..count.. " "..items[item].label})
+                TriggerClientEvent("GTA:Refreshinventaire", src, PlayersSource[src].inventaire, GetInvWeight(PlayersSource[src].inventaire))
             end
 
             -- Adding item to target
-            local exist, itemid = DoesItemExistWithArg(item, args)
+            local exist, itemid = DoesItemExistWithArg(target,item, args)
             if not exist then
                 itemid = GenerateItemId()
                 PlayersSource[target].inventaire[itemid] = {}
@@ -129,16 +127,18 @@ function GiveItem(id, target, item, count, args, itemid)
             else
                 PlayersSource[target].inventaire[itemid].count = PlayersSource[target].inventaire[itemid].count + count
             end
+
+            TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+            TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+            
             TriggerClientEvent("NUI-Notification", target, {"Vous avez reçu x" ..count.. " "..items[item].label})
-            TriggerClientEvent("GTA:Refreshinventaire", target, PlayersSource[id].inventaire, tWeight)
+            TriggerClientEvent("GTA:Refreshinventaire", target, PlayersSource[target].inventaire, tWeight)
         else
-            TriggerClientEvent("NUI-Notification", target, {"Vous n'avez pas assez de place dans votre inventaire."})
+            TriggerClientEvent("NUI-Notification", src, {"Son inventaire est rempli.", "warning"})
+            TriggerClientEvent("NUI-Notification", target, {"Vous n'avez pas assez de place dans votre inventaire.", "warning"})
         end
     end
-end
-]]
-
-
+end)
 
 
 --[[ 

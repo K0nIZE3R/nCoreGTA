@@ -92,56 +92,36 @@ Citizen.CreateThread(function()
                                 item.item = v.item
                                 item.id = v.itemId
 
-                                if Index == 1 then 
+                                if (Index == 1) then --> Use
                                     TriggerEvent("GTA:UseItem", item.item, item.id)
-                                    TriggerEvent("NUI-Notification", {"Action en cours ..."..item.label})
-                                elseif Index == 2 then 
-                                    --> Donner
-                                    --[[ 
-                                    local ClosestPlayerSID = GetPlayerServerId(GetClosestPlayer())
-                                    if ClosestPlayerSID ~= 0 then
-                                        local result = InputNombre("Montant : ")
+                                elseif (Index == 2) then  --> Give
+                                    local target = GetPlayerServerId(GetClosestPlayer())
+                                    if target ~= 0 then
+                                        local qty = GetInputNumber()
                         
-                                        if tonumber(result) == nil then
-                                            TriggerEvent("NUI-Notification", {"Veuillez inserer un nombre correct !", "warning"})
+                                        if not tonumber(qty) or tonumber(qty) == nil then
+                                            TriggerEvent("NUI-Notification", {"Veuillez saisir un nombre correct. ", "warning"})
                                             return nil
                                         end
-                        
-                                        if tonumber(v.quantity) >= tonumber(result) and tonumber(result) > 0 then
-                                            TriggerServerEvent('player:giveItem',ClosestPlayerSID,k, v.libelle,tonumber(result))
+
+                                        if (tonumber(v.count) >= qty) then
+                                            TriggerServerEvent("GTA:GiveItem", target, item.item, item.id, qty)
                                         else
                                             TriggerEvent("NUI-Notification", {"Vous n'avez pas assez d'items.", "warning"})
                                         end
                                     else
                                         TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                                     end
-                                    Wait(250)
-                            		TriggerEvent("GTA:LoadWeaponPlayer")
-                                    ]]
-                                elseif Index == 3 then
+
+                                    --Wait(250)
+                            		--TriggerEvent("GTA:LoadWeaponPlayer")
+                                   
+                                elseif (Index == 3) then --> Jeter
                                     local count = KeyboardAmount()
                                     if count ~= nil and count > 0 and count <= item.count then
                                         TriggerServerEvent("GTA:RemoveItem", item.item, item.id, count)
                                         TriggerEvent("NUI-Notification", {"Vous avez jeter x" ..count.. " "..item.label})
                                     end
-
-                                    --[[ 
-                                        local result = InputNombre("Montant : ")
-
-                                        if tonumber(result) == nil then
-                                            TriggerEvent("NUI-Notification", {"Veuillez inserer un nombre correct !", "warning"})
-                                            return nil
-                                        end
-                            
-                                        if tonumber(v.quantity) >= tonumber(result) and tonumber(result) > 0 then
-                                            TriggerEvent('player:looseItem',k,tonumber(result))
-                                            TriggerEvent("NUI-Notification", {"Vous avez jeter x".. tonumber(result) .. " "..v.libelle})
-                                        else
-                                            TriggerEvent("NUI-Notification", {"Vous n'avez pas tout ça sur vous d'items."})
-                                        end
-                                        Wait(250)
-                                        TriggerEvent("GTA:LoadWeaponPlayer")
-                                    ]]
                                 end
                         end,
                     })

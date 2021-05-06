@@ -124,36 +124,22 @@ function RenderCarte()
 	--DrawAdvancedText2(0.897000000000001, 0.470, 0.005, 0.0028, 0.3, "[SOON] Permis Port d'armes : "..identitepermis4, 255, 255, 255, 255, 0, 1)
 end
 
-function InputNombre(reason)
-	local text = ""
-	AddTextEntry('nombre', reason)
-    DisplayOnscreenKeyboard(1, "nombre", "", "", "", "", "", 4)
+function GetInputNumber()
+    local nb = 0
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TTTIP8", "", "", "", "", "", 20)
     while (UpdateOnscreenKeyboard() == 0) do
         DisableAllControlActions(0)
         Wait(10)
     end
     if (GetOnscreenKeyboardResult()) then
-        text = GetOnscreenKeyboardResult()
+        nb = GetOnscreenKeyboardResult()
+        nb = nb:gsub("[^0-9]", "")
+        nb = tonumber(nb)
+        if nb == nil or nb < 0 then
+           nb = 0
+        end
     end
-    return text
-end
-
-function KeyboardAmount()
-    local amount = nil
-    AddTextEntry("CUSTOM_AMOUNT", "Enter amount")
-    DisplayOnscreenKeyboard(1, "CUSTOM_AMOUNT", '', "", '', '', '', 15)
-
-    while UpdateOnscreenKeyboard() ~= 1 and UpdateOnscreenKeyboard() ~= 2 do
-        Citizen.Wait(0)
-    end
-
-    if UpdateOnscreenKeyboard() ~= 2 then
-        amount = GetOnscreenKeyboardResult()
-        Citizen.Wait(1)
-    else
-        Citizen.Wait(1)
-    end
-    return tonumber(amount)
+    return nb
 end
 
 function RequestToSave()

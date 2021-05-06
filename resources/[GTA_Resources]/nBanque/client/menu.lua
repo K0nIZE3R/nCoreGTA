@@ -7,7 +7,7 @@ Citizen.CreateThread(function()
             RageUI.Button('Retirer', "", {}, true, { 
 			onSelected = function()
 				local nb = GetInputNumber(0)
-				if tonumber(nb) == nil then
+				if not tonumber(nb) or tonumber(nb) == nil then
 	                TriggerEvent("NUI-Notification", {"Veuillez saisir un nombre correct. ", "warning"})
 					return nil
 				end

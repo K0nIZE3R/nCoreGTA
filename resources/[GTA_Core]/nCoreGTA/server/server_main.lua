@@ -145,9 +145,6 @@ AddEventHandler('GTA:CreationJoueur', function()
 			TriggerClientEvent("GTA:UpdatePersonnage", source, res2[1].sex, res2[1].cheveux, res2[1].couleurCheveux, res2[1].couleurYeux, res2[1].pere, res2[1].mere, res2[1].couleurPeau, res2[1].visage)
 		end)
 
-        Wait(1000)
-        
-    	--TriggerClientEvent("GTA:JoueurLoaded", source)
         TriggerClientEvent("GTA:UpdateHungerStat", source, PlayersSource[source].faim, PlayersSource[source].soif)
         TriggerClientEvent("GTA_Interaction:UpdateInfoPlayers", source, PlayersSource[source].identiter, PlayersSource[source].banque)
 	end

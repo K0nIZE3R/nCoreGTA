@@ -57,23 +57,22 @@ RegisterNetEvent("GTA:SpawnPlayer")
 AddEventHandler("GTA:SpawnPlayer", function()
     Citizen.CreateThread(function()
         if  (GetIsFirstConnexion() == false) then
-            cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA",config.Player.pos+200, 300.00,0.00,0.00, 100.00, false, 0)
-            PointCamAtCoord(cam,config.Player.pos+2)
-            SetCamActiveWithInterp(cam, camSpawn, 500, true, true)
-            Citizen.Wait(500)
+            SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
+	        NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)
+            cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", config.Player.pos+200, 300.00,0.00,0.00, 100.00, false, 0)
+            PointCamAtCoord(cam, config.Player.pos+2)
             PlaySoundFrontend(-1, "Zoom_Out", "DLC_HEIST_PLANNING_BOARD_SOUNDS", 1)
             RenderScriptCams(false, true, 500, true, true)
             PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
-            Citizen.Wait(100)
-            SetCamActive(cam, false)
-            DestroyCam(cam, true)
-
-            SetEntityCoords(GetPlayerPed(-1), config.Player.pos, 0.0, 0.0, 0.0, 0)
-            SetEntityVisible(PlayerPedId(), false, 0)
-
             FreezeEntityPosition(GetPlayerPed(-1), false)
             SetEntityVisible(PlayerPedId(), true, 0)
-            
+            Citizen.Wait(500)
+            SetCamActive(cam2, false)
+	        DestroyCam(cam2, true)
+            SetCamActive(cam, false)
+	        DestroyCam(cam, true)
+
+
             DisplayRadar(true)
             DisplayHud(true)
             TriggerEvent('EnableDisableHUDFS', true)
@@ -99,8 +98,8 @@ Citizen.CreateThread(function()
             DrawMissionText("~h~APPUYER SUR~r~ A ~w~ POUR REJOINDRE LA VILLE.")
         end
 
-        camSpawn = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1355.93,-1487.78,520.75, 300.00,0.00,0.00, 100.00, false, 0)
-        SetCamActive(camSpawn, true)
+        cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", -1355.93,-1487.78,520.75, 300.00,0.00,0.00, 100.00, false, 0)
+        SetCamActive(cam, true)
         RenderScriptCams(true, false, 1, true, true)
 
         DisplayRadar(false)
@@ -108,8 +107,8 @@ Citizen.CreateThread(function()
         TriggerEvent('EnableDisableHUDFS', false)
 
         if IsControlJustPressed(0, 18) then
-            PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
             TriggerEvent("GTA:SpawnPlayer")
+            PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
             break
         end
 	end

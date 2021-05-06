@@ -126,10 +126,10 @@ AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
     if origine ~= nil then PlayersSource[source].identiter.origine = origine end
 
 	local t = { 
-		["nom"] = PlayersSource[source].identiter.nom,
-		["prenom"] = PlayersSource[source].identiter.prenom,
-		["age"] = PlayersSource[source].identiter.age,
-		["origine"] = PlayersSource[source].identiter.origine
+		["nom"] = PlayersSource[source].identiter.nom or "Sans Nom",
+		["prenom"] = PlayersSource[source].identiter.prenom or "Sans Prenom",
+		["age"] = PlayersSource[source].identiter.age or "0",
+		["origine"] = PlayersSource[source].identiter.origine or "Origine"
 	}
 
 	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayers", source, t)
