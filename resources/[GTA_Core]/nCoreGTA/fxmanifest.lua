@@ -21,7 +21,8 @@ client_scripts {
     'client_main/coma.lua',
     'synchronisation/client.lua',
     'services/client.lua',
-    'public_event/cPublic_event.lua'
+    'public_event/cPublic_event.lua',
+    'public_event/items_event.lua'
 }
 
 exports {

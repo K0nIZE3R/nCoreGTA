@@ -3,7 +3,6 @@ local waitBanque = 1000
 activeSolde = false
 something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
 
-
 atms = {
     {x=-386.733, y=6045.953, z=31.501},
     {x=-284.037, y=6224.385, z=31.187},
@@ -147,20 +146,3 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
-
-
-function drawTxt(text,font,centre,x,y,scale,r,g,b,a)
-	SetTextFont(font)
-	SetTextProportional(0)
-	SetTextScale(scale, scale)
-	SetTextColour(r, g, b, a)
-	SetTextDropShadow(0, 0, 0, 0,255)
-	SetTextEdge(1, 0, 0, 0, 255)
-	SetTextDropShadow()
-	SetTextOutline()
-	SetTextCentre(centre)
-	SetTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawText(x , y)
-end
-

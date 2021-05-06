@@ -52,6 +52,7 @@ end)
 ]=====]
 RegisterNetEvent("GTA:ReceiveItem")
 AddEventHandler("GTA:ReceiveItem", function(item, count, args) 
+    local count = count or 1
     local src = source
     if items[item] ~= nil then
         local exist, itemid = DoesItemExistWithArg(src, item, args)

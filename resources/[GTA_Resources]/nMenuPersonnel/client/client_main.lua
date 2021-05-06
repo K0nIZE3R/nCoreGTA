@@ -221,6 +221,8 @@ function GetPlayers()
     return players
 end
 
+
+
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(waitRenderCarte)

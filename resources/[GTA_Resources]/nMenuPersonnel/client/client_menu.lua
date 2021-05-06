@@ -92,8 +92,9 @@ Citizen.CreateThread(function()
                                 item.item = v.item
                                 item.id = v.itemId
 
-                                if Index == 1 then  
-                                   --> Utiliser
+                                if Index == 1 then 
+                                    TriggerEvent("GTA:UseItem", item.item, item.id)
+                                    TriggerEvent("NUI-Notification", {"Action en cours ..."..item.label})
                                 elseif Index == 2 then 
                                     --> Donner
                                     --[[ 

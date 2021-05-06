@@ -205,3 +205,22 @@ AddEventHandler("GTA:AfficherBanque", function(value)
 	config.Player.banque = value
 	StatSetInt("BANK_BALANCE", config.Player.banque, true)
 end)
+
+local items = config.itemList
+RegisterNetEvent("GTA:UseItem")
+AddEventHandler("GTA:UseItem", function(item_name, itemid)
+    for k,v in pairs(items) do
+        if k == item_name then
+			if v.type == "boissons" then
+				TriggerEvent("nAddSoif", 25, item_name, itemid) --> Nombre d'ajout au moment ou il boit.
+			elseif v.type == "nourriture" then
+				TriggerEvent("nAddFaim", 25, item_name, itemid)  --> Nombre d'ajout au moment ou il mange.
+			elseif v.type == "armes" then 
+				TriggerEvent("GTA_Items_Type:Weapons")
+			elseif v.type == "medical" then 
+				TriggerEvent("GTA_Items_Type:Medics", item_name, itemid)
+			end
+            break
+        end
+    end
+end)
