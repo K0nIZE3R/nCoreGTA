@@ -77,9 +77,10 @@ Citizen.CreateThread(function()
             for _,v in pairs(pInv) do
                 if v.count > 0 then 
                     RageUI.List(v.label .. " ".. v.count, {
-                            { Name = "~h~~b~Utiliser~w~"},
-                            { Name = "~h~~g~Donner~w~"},
-                            { Name = "~h~~r~Jeter~w~"},
+                            { Name = "Utiliser"},
+                            { Name = "~h~~b~Donner"},
+                            { Name = "~h~~g~Renomer"},
+                            { Name = "~h~~r~Jeter"},
                         }, v.index or 1, "", {}, true, {
                             onListChange = function(Index, Item)
                                 v.index = Index;
@@ -116,8 +117,12 @@ Citizen.CreateThread(function()
                                     --Wait(250)
                             		--TriggerEvent("GTA:LoadWeaponPlayer")
                                    
-                                elseif (Index == 3) then --> Jeter
-                                    local count = KeyboardAmount()
+                                elseif (Index == 3) then --> Renomer
+                                        local newNameItem = GetInputText("Entrez le nouveau nom de l'item")
+                                        TriggerServerEvent("GTA:RenameItem", item.item, newNameItem, item.id)
+                                        RageUI.CloseAll()
+                                elseif (Index == 4) then  --> Jeter
+                                    local count = GetInputNumber()
                                     if count ~= nil and count > 0 and count <= item.count then
                                         TriggerServerEvent("GTA:RemoveItem", item.item, item.id, count)
                                         TriggerEvent("NUI-Notification", {"Vous avez jeter x" ..count.. " "..item.label})

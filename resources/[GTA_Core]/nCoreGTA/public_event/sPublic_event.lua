@@ -80,8 +80,8 @@ AddEventHandler('GTA:salaire', function()
     local license = GetPlayerIdentifiers(source)[1]
 
 	MySQL.Async.fetchAll('SELECT salaire FROM gta_joueurs INNER JOIN gta_metiers ON gta_joueurs.job = gta_metiers.metiers WHERE license = @license',{['@license'] = license}, function(res)
-		PlayersSource[id].banque = PlayersSource[id].banque + res[1].salaire
-		TriggerClientEvent('GTA:AfficherBanque', source, PlayersSource[id].banque)
+		PlayersSource[source].banque = PlayersSource[source].banque + res[1].salaire
+		TriggerClientEvent('GTA:AfficherBanque', source, PlayersSource[source].banque)
 		TriggerClientEvent("GTAO:NotificationIcon", source, "CHAR_BANK_MAZE", "Maze Bank", "+ : ~g~" ..res[1].salaire.. " $", "Salaire reçu")
 	end)
 end)

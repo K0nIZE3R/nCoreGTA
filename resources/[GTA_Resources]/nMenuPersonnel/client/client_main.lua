@@ -142,6 +142,19 @@ function GetInputNumber()
     return nb
 end
 
+function GetInputText(actualtext)
+    local text = ""
+    DisplayOnscreenKeyboard(1, "FMMC_KEY_TTTIP8", "", actualtext, "", "", "", 120)
+    while (UpdateOnscreenKeyboard() == 0) do
+        DisableAllControlActions(0)
+        Wait(10)
+    end
+    if (GetOnscreenKeyboardResult()) then
+        text = GetOnscreenKeyboardResult()
+    end
+    return text
+end
+
 function RequestToSave()
 	local LastPosX, LastPosY, LastPosZ = table.unpack(GetEntityCoords(GetPlayerPed(-1), true))
 	TriggerServerEvent("GTA:SAVEPOS", LastPosX , LastPosY , LastPosZ)

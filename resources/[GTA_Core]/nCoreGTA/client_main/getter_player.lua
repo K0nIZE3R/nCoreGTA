@@ -1,10 +1,6 @@
 ----------------
 -- PLAYER GETTER EXPORTS--
 ----------------
---exports.nCoreGTA:GetPlayerUniqueId()
-function GetPlayerUniqueId()
-    return config.Player.id
-end
 
 --exports.nCoreGTA:GetPlayerJob()
 function GetPlayerJob()

@@ -59,19 +59,6 @@ AddEventHandler("GTA:SpawnPlayer", function()
         if  (GetIsFirstConnexion() == false) then
             SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
 	        NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)
-            cam = CreateCamWithParams("DEFAULT_SCRIPTED_CAMERA", config.Player.pos+200, 300.00,0.00,0.00, 100.00, false, 0)
-            PointCamAtCoord(cam, config.Player.pos+2)
-            PlaySoundFrontend(-1, "Zoom_Out", "DLC_HEIST_PLANNING_BOARD_SOUNDS", 1)
-            RenderScriptCams(false, true, 500, true, true)
-            PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
-            FreezeEntityPosition(GetPlayerPed(-1), false)
-            SetEntityVisible(PlayerPedId(), true, 0)
-            Citizen.Wait(500)
-            SetCamActive(cam2, false)
-	        DestroyCam(cam2, true)
-            SetCamActive(cam, false)
-	        DestroyCam(cam, true)
-
 
             DisplayRadar(true)
             DisplayHud(true)
@@ -107,6 +94,12 @@ Citizen.CreateThread(function()
         TriggerEvent('EnableDisableHUDFS', false)
 
         if IsControlJustPressed(0, 18) then
+            DestroyAllCams(true)
+            SetCamActive(cam, false)
+            RenderScriptCams(false,  false,  0,  true,  true)
+
+            Wait(1000)
+
             TriggerEvent("GTA:SpawnPlayer")
             PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
             break
@@ -117,7 +110,6 @@ end)
 
  --> Main Thread :
 Citizen.CreateThread(function()
-
     --> PVP :
     if config.activerPvp == true then
         for _, v in ipairs(GetActivePlayers()) do

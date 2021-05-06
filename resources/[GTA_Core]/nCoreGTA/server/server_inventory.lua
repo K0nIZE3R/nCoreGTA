@@ -5,12 +5,22 @@ local __RoundNumber = function(value, numDecimalPlaces)
 	return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", value))
 end
 
+
 --[=====[
-    	Parameter : 
-        id : unique id of the player.
-        item : item name exemple : pistol.
-        itemid : id of the item v.itemId.
-        count : number of item.
+    	Permet de rename un item de votre inventaire : 
+]=====]
+RegisterNetEvent("GTA:RenameItem")
+AddEventHandler("GTA:RenameItem", function(item_name, newLabel, itemid) 
+    local source = source
+    PlayersSource[source].inventaire[itemid].label = newLabel
+        
+    TriggerClientEvent("NUI-Notification", source, {"Vous avez renomer votre item : " ..PlayersSource[source].inventaire[itemid].label})
+    TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
+end)
+
+
+--[=====[
+    	Permet de retirer un item de votre inventaire ou target :
 ]=====]
 RegisterNetEvent("GTA:RemoveItem")
 AddEventHandler("GTA:RemoveItem", function(item, itemid, count) 
@@ -44,11 +54,9 @@ AddEventHandler("GTA:GetItemQty", function(source, item_name, callback)
     end
 end)
 
+
 --[=====[
-    	Parameter : 
-        id : unique id of the player.
-        item : item name exemple : pistol.
-        count : number of item.
+    Permet de recevoir un item :
 ]=====]
 RegisterNetEvent("GTA:ReceiveItem")
 AddEventHandler("GTA:ReceiveItem", function(item, count, args) 
@@ -82,15 +90,10 @@ AddEventHandler("GTA:ReceiveItem", function(item, count, args)
 end)
 
 
+
 --[=====[
-    	Parameter : 
-        id : unique id of the player.
-        target : unique id of the target.
-        item : item name exemple : pistol.
-        count : number of item.
+    Permet de give un item a un player:
 ]=====]
-
-
 RegisterNetEvent("GTA:GiveItem")
 AddEventHandler("GTA:GiveItem", function(target, item, itemid, count, args) 
     local src = source
@@ -130,7 +133,7 @@ AddEventHandler("GTA:GiveItem", function(target, item, itemid, count, args)
 
             TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
             TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
-            
+
             TriggerClientEvent("NUI-Notification", target, {"Vous avez reçu x" ..count.. " "..items[item].label})
             TriggerClientEvent("GTA:Refreshinventaire", target, PlayersSource[target].inventaire, tWeight)
         else
@@ -142,6 +145,20 @@ end)
 
 
 --[[ 
+    Permet de savoir si l'item existe dans la liste des items, si vrais il retourne "l'id" de l'item :
+]]--
+RegisterNetEvent("GTA_Inventaire:DoesItemExist")
+AddEventHandler("GTA_Inventaire:DoesItemExist", function(source, item, callback) 
+    for _,v in pairs(PlayersSource[source].inventaire) do
+        if v.item == item then
+            callback(v.itemId) 
+        end
+    end
+end)
+
+
+
+--[[ 
 return generated item id
 ]]--
 function GenerateItemId()
@@ -149,14 +166,6 @@ function GenerateItemId()
 end
 
 
-------------------------------------------------------- :
------------------------INVENTAIRE---------------------- :
-------------------------------------------------------- :
---[[
-id = player id
-item = item name to check
-arg = item args
-]]--
 
 function GetInvWeight(inv)
     local countWeight = 0
@@ -178,20 +187,6 @@ function DoesItemExistWithArg(source, item, arg)
     return false
 end
 
-RegisterNetEvent("GTA_Inventaire:DoesItemExist")
-AddEventHandler("GTA_Inventaire:DoesItemExist", function(source, item, callback) 
-    for _,v in pairs(PlayersSource[source].inventaire) do
-        if v.item == item then
-            callback(v.itemId) 
-        end
-    end
-end)
-
---[[ 
-id = player id
-itemId = itemID of the item targeted
-arg = item args
-]]--
 function SetItemArg(source, itemId, arg)
     for k,v in pairs(PlayersSource[source].inventaire) do
         if v.itemId == itemId then
@@ -201,4 +196,7 @@ function SetItemArg(source, itemId, arg)
 
     TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
 end
+
+
+
 
