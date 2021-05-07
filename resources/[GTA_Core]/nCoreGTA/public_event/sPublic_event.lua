@@ -118,7 +118,19 @@ AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
 		["telephone"] = PlayersSource[source].phone_number,
 	}
 
-	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
-	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+	if (target ~= nil) then
+		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+	end
 	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", targetP, t)
+end)
+
+
+
+--[=====[
+    	cette event sert uniquement a get l'argent de banque utile pour faire des condition avant vos achat ou autre.
+]=====]
+RegisterServerEvent('GTA:GetArgentBanque')
+AddEventHandler('GTA:GetArgentBanque', function(source, callback)
+	callback(PlayersSource[source].banque)
 end)

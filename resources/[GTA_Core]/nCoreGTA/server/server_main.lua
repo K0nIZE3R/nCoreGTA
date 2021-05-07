@@ -188,15 +188,6 @@ AddEventHandler('GTA:RetirerArgentBanque', function(value)
     TriggerClientEvent("GTA:AfficherBanque", source, PlayersSource[source].banque)
 end)
 
---[=====[
-    	cette event sert uniquement a get l'argent de banque utile pour faire des condition avant vos achat ou autre.
-]=====]
-RegisterServerEvent('GTA:GetArgentBanque')
-AddEventHandler('GTA:GetArgentBanque', function(source, callback)
-	callback(PlayersSource[source].banque)
-    TriggerClientEvent("GTA:AfficherBanque", source, PlayersSource[source].banque)
-end)
-
 
 AddEventHandler('GTA:GetJoueurs', function(cb)
     cb(PlayersSource)

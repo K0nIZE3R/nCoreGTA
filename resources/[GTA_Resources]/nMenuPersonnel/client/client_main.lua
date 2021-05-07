@@ -249,9 +249,12 @@ function GetInputText(actualtext)
 end
 
 function RequestToSave()
-	local LastPosX, LastPosY, LastPosZ = table.unpack(GetEntityCoords(GetPlayerPed(-1), true))
-	TriggerServerEvent("GTA:SAVEPOS", LastPosX , LastPosY , LastPosZ)
-	TriggerEvent("NUI-Notification", {"Position Sauvegarder."})
+	local pPed = GetPlayerPed(-1)
+	local pCoords = GetEntityCoords(pPed)
+	TriggerServerEvent("GTA:SavePos", pCoords)
+	Wait(50)
+	TriggerServerEvent("GTA:SyncPlayer")
+	TriggerEvent("NUI-Notification", {"Synchronisation éfféctué."})
 end
 
 function GetClosestPlayer()

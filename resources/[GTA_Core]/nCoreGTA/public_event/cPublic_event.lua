@@ -203,7 +203,6 @@ RegisterNetEvent("GTA:AfficherBanque")
 AddEventHandler("GTA:AfficherBanque", function(value)
 	--> On passe ici pour update la valeur de votre argent en banque du "getter_player" : GetPlayerBank.
 	config.Player.banque = value
-	StatSetInt("BANK_BALANCE", config.Player.banque, true)
 end)
 
 local items = config.itemList

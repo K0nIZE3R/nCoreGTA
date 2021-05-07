@@ -65,7 +65,7 @@ Citizen.CreateThread(function()
                     isEssenceHudActiver = Index
                 end
             })
-            RageUI.Button('~g~Sauvegarder ma position', "", {}, true, { onSelected = function() RequestToSave() end});
+            RageUI.Button('~g~Sauvegarder', "", {}, true, { onSelected = function() RequestToSave() end});
             RageUI.Button('Options Menu', "", {}, true, {}, subOptions);
         end, function()end)
 
@@ -242,7 +242,7 @@ Citizen.CreateThread(function()
         end
 
 
-		if IsControlJustReleased(0, 202) then
+		if IsControlJustReleased(0, 202) and config.showIdentiter then
             config.showIdentiter = false
         end
         

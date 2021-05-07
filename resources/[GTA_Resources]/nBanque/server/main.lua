@@ -3,7 +3,9 @@
 RegisterServerEvent('nBanqueSolde:SRender')
 AddEventHandler('nBanqueSolde:SRender', function()
 	local source = source	
-	TriggerClientEvent('nBanqueSolde:CRender', source)
+	TriggerEvent("GTA:GetArgentBanque", source, function(qtyBank)
+		TriggerClientEvent('nBanqueSolde:CRender', source, qtyBank)
+	end)
 end)
 
 

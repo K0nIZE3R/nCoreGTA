@@ -1,7 +1,8 @@
  --||@SuperCoolNinja. && RamexDeltaXOO||--
 local waitBanque = 1000
-activeSolde = false
-something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
+local activeSolde = false
+local argentBanque = 0
+
 
 atms = {
     {x=-386.733, y=6045.953, z=31.501},
@@ -59,9 +60,9 @@ end)
 
 
 RegisterNetEvent('nBanqueSolde:CRender')
-AddEventHandler('nBanqueSolde:CRender', function()
-	activeSolde = true
-	something2, BankAmount = StatGetInt("BANK_BALANCE",-1)
+AddEventHandler('nBanqueSolde:CRender', function(qtyBank)
+	argentBanque = qtyBank
+    activeSolde = true
 end)
 
 RegisterNetEvent('GTA_Banque:ClientDeposerArgentBanque')
@@ -121,8 +122,7 @@ end
 function RenderSolde()
 	DrawRect(0.912000000000001, 0.292, 0.185, 0.205, 0, 0, 0, 180)
 	DrawAdvancedText(0.966000000000001, 0.220, 0.005, 0.0028, 0.5, "~h~Votre Solde:", 255, 255, 255, 255, 0, 1)
-	DrawAdvancedText(0.924000000000001, 0.278, 0.005, 0.0028, 0.4, "~w~Banque ~b~" ..BankAmount .."~g~$",255, 255, 255, 255, 0, 1)
-	--DrawAdvancedText(0.924000000000001, 0.322, 0.005, 0.0028, 0.4, "~w~Cash ~b~" ..CashAmount.."~g~$", 255, 255, 255, 255, 0, 1)
+	DrawAdvancedText(0.924000000000001, 0.278, 0.005, 0.0028, 0.4, "~w~Banque ~b~" ..argentBanque .."~g~$",255, 255, 255, 255, 0, 1)
 end
 
 Citizen.CreateThread(function()

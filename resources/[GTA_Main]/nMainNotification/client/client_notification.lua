@@ -48,5 +48,5 @@ end)
 
 --> CallBack Error from NUI : used to exit the nui + show the data error.
 RegisterNUICallback("error", function()
-    print("NUI WANTED ERROR : Text empty or type notif not valid.")
+    print("Text empty or type notif not valid.")
 end)

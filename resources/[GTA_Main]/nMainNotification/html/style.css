@@ -9,26 +9,26 @@
 
 #notification-area {
     position: fixed;
-    top: -10vh;
-    right: 10px;
-    max-width: 800px;
-    min-height: 100px;
-    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    top: -10vh;
+    right: 10px;
+    height: 100vh;
+    max-width: 30vw;
+    min-width: 20vw;
 }
 
 .notification {
     display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    padding: 10px 8px;
+    flex-direction: row;
+    padding: 15px 5px;
     color: #f5f5f5;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     border-radius: 5px;
-    margin-top: 10px;
+    margin: 5px 0px;
+    text-align: right;
 }
 
 .notification.success {
