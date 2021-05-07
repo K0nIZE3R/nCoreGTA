@@ -17,7 +17,7 @@ AddEventHandler("GTA_Interaction:UpdateInfoPlayers", function(identiter, banque)
 end)
 
 RegisterNetEvent("GTA_Interaction:UpdateInfoPlayersIdentiter")
-AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter, targetID)
+AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter)
 	config.showIdentiter = true
 
     config.identiter.nom = identiter["nom"] 

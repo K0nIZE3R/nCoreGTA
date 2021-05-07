@@ -20,40 +20,6 @@ AddEventHandler('GTA:GetAllHandleItems', function(handle, callback)
         end
     end)
 end)
-
-
-RegisterNetEvent('GTA:GetUserQtyItem')  --> cette event sert uniquement a get la quantité d'un item server-side.
-AddEventHandler('GTA:GetUserQtyItem', function(source, itemID, callback)
-	local source = source
-	local license = GetPlayerIdentifiers(source)[1]
-
-	MySQL.Async.fetchAll("SELECT quantity FROM user_inventory WHERE license = @username AND item_id = @item", {['@username'] = license, ['@item'] = itemID}, function(result)
-		if(result[1] ~= nil) then
-			if callback then
-				callback(result[1].quantity)
-			end
-		else
-			TriggerClientEvent("GTA_NUI_ShowNotif_client",  source, "Vous ne possédez pas cette item sur vous.", "warning")
-		end
-	end)
-end)
-
-
-RegisterNetEvent('GTA:GetMaxQtyItems')  --> cette event sert uniquement a get le max de quantité de l'item saisit.
-AddEventHandler('GTA:GetMaxQtyItems', function(itemID, callback)
-    local source = source
-    local item_name = ""
-    MySQL.Async.fetchAll("SELECT libelle, max_qty FROM items WHERE id = @itemid", { ['@itemid'] = itemID}, function(res)
-		if(res[1]) then
-            if callback then
-                item_name = res[1].libelle
-                callback(res[1].max_qty)
-            end
-        else
-            TriggerClientEvent("GTA_NUI_ShowNotif_client", source, "L'item saisit : "..item_name.." est introuvable.", "error", "fa fa-exclamation-circle fa-2x")
-		end
-	end)
-end)
 --]]
 
 --[=====[
@@ -141,15 +107,18 @@ end)
 ]=====]
 RegisterNetEvent("GTA:GetPlayerInformationsIdentiter")
 AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
-	local player = target or source
+	local source = source
+	local targetP = source or target
 	local t = { 
 		["nom"] = PlayersSource[source].identiter.nom,
-		["prenom"] = PlayersSource[player].identiter.prenom,
-		["age"] = PlayersSource[player].identiter.age,
-		["origine"] = PlayersSource[player].identiter.origine,
-		["profession"] = PlayersSource[player].job,
-		["telephone"] = PlayersSource[player].phone_number,
+		["prenom"] = PlayersSource[source].identiter.prenom,
+		["age"] = PlayersSource[source].identiter.age,
+		["origine"] = PlayersSource[source].identiter.origine,
+		["profession"] = PlayersSource[source].job,
+		["telephone"] = PlayersSource[source].phone_number,
 	}
 
-	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", player, t, target)
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", targetP, t)
 end)

@@ -147,9 +147,9 @@ Citizen.CreateThread(function()
 
             RageUI.Button('Montrer votre identité', "", {}, true, {
                 onSelected = function()
-                    local ClosestPlayerSID = GetPlayerServerId(GetClosestPlayer())
-                    if ClosestPlayerSID ~= 0 then
-                        TriggerServerEvent("GTA:MontrerSonIdentiter", ClosestPlayerSID)
+                    local target = GetPlayerServerId(GetClosestPlayer())
+                    if target ~= 0 then
+                        TriggerServerEvent("GTA:GetPlayerInformationsIdentiter", target)
                     else
                         TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                     end
