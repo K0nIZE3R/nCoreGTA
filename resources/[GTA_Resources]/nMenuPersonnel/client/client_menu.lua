@@ -141,7 +141,8 @@ Citizen.CreateThread(function()
 
             RageUI.Button('Regarder votre identité', "", {}, true, {
                 onSelected = function()
-                TriggerServerEvent("GTA:ChercherSonIdentiter")
+                    TriggerServerEvent("GTA:GetPlayerInformationsIdentiter")
+                    RageUI.CloseAll()
             end});
 
             RageUI.Button('Montrer votre identité', "", {}, true, {
@@ -152,7 +153,7 @@ Citizen.CreateThread(function()
                     else
                         TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                     end
-            end});
+            end})
         end, function() end)
 
         --> Tenue Menu : 
@@ -239,10 +240,16 @@ Citizen.CreateThread(function()
             TriggerServerEvent("GTA:GetPlayerSexServer")
             RageUI.Visible(mainMenu, not RageUI.Visible(mainMenu))
         end
+
+
+		if IsControlJustReleased(0, 202) then
+            config.showIdentiter = false
+        end
+        
         
         if RageUI.Visible(mainMenu) or RageUI.Visible(subInventaire) or RageUI.Visible(subPapiers) or RageUI.Visible(subTenues) or RageUI.Visible(subOptions) then 
             DisableControlAction(0, 140, true) --> DESACTIVER LA TOUCHE POUR PUNCH
-           DisableControlAction(0, 172, true) --DESACTIVE CONTROLL HAUT  
+            DisableControlAction(0, 172, true) --DESACTIVE CONTROLL HAUT  
        end
     end
 end)

@@ -28,7 +28,7 @@ end
 
 --> Création/Load du player :
 Citizen.CreateThread(function()
-    TriggerServerEvent("GTA:CreationJoueur") 
+    TriggerServerEvent("GTA:CreationJoueur")
 end)
 
 --[=====[
@@ -48,31 +48,35 @@ AddEventHandler("GTA:LoadPlayerData", function(playersInfo, itemsList)
     config.Player = playersInfo
     config.itemList = itemsList
 
-    TriggerServerEvent("GTA:TelephoneLoaded") --> Load le phone au spawn :
+    TriggerServerEvent("GTA:TelephoneLoaded") --> Load le phone au spawn.
     --TriggerEvent("GTA:LoadWeaponPlayer")
 end)
 
 
 RegisterNetEvent("GTA:SpawnPlayer")
 AddEventHandler("GTA:SpawnPlayer", function()
-    Citizen.CreateThread(function()
-        if  (GetIsFirstConnexion() == false) then
-            SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
-	        NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)
+    if  (GetIsFirstConnexion() == false) then
+        SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
+        NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)
 
-            DisplayRadar(true)
-            DisplayHud(true)
-            TriggerEvent('EnableDisableHUDFS', true)
-        else
-            GetDepartItemList()
-            TriggerEvent("GTA:BeginCreation")
-            for _, v in pairs(departItemList) do
-                TriggerServerEvent("GTA:ReceiveItem", v.name, v.qty)
-            end
+        DisplayRadar(true)
+        DisplayHud(true)
+        TriggerEvent('EnableDisableHUDFS', true)
+    else
+        GetDepartItemList()
+        TriggerEvent("GTA:BeginCreation")
+        for _, v in pairs(departItemList) do
+            TriggerServerEvent("GTA:ReceiveItem", v.name, v.qty)
         end
+    end
 
-        exports.spawnmanager:setAutoSpawn(false)
-    end)
+    Wait(1000)
+
+    DestroyAllCams(true)
+    SetCamActive(cam, false)
+    RenderScriptCams(false,  false,  0,  true,  true)
+
+    exports.spawnmanager:setAutoSpawn(false)
 end)
 
 
@@ -94,12 +98,6 @@ Citizen.CreateThread(function()
         TriggerEvent('EnableDisableHUDFS', false)
 
         if IsControlJustPressed(0, 18) then
-            DestroyAllCams(true)
-            SetCamActive(cam, false)
-            RenderScriptCams(false,  false,  0,  true,  true)
-
-            Wait(1000)
-
             TriggerEvent("GTA:SpawnPlayer")
             PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
             break

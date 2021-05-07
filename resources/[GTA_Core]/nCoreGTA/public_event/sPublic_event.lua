@@ -134,3 +134,22 @@ AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
 
 	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayers", source, t)
 end)
+
+
+--[=====[
+    	Cette event vous retourne les informations de votre player ou target pour afficher les info de la carte d'identité :
+]=====]
+RegisterNetEvent("GTA:GetPlayerInformationsIdentiter")
+AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
+	local player = target or source
+	local t = { 
+		["nom"] = PlayersSource[source].identiter.nom,
+		["prenom"] = PlayersSource[player].identiter.prenom,
+		["age"] = PlayersSource[player].identiter.age,
+		["origine"] = PlayersSource[player].identiter.origine,
+		["profession"] = PlayersSource[player].job,
+		["telephone"] = PlayersSource[player].phone_number,
+	}
+
+	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", player, t, target)
+end)

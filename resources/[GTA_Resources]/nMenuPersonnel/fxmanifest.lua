@@ -29,3 +29,11 @@ client_scripts {
     'client/client_armes.lua',
     'client/client_menu.lua'
 }
+
+ui_page "html/index.html"
+files {
+    "html/index.html",
+    "html/script.js",
+    "html/style.css",
+    "html/idcard.png"
+}

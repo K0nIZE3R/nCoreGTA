@@ -21,6 +21,7 @@ USE `gta_serveur`;
 DROP TABLE IF EXISTS `gta_joueurs`;
 CREATE TABLE IF NOT EXISTS `gta_joueurs` (
   `license` varchar(50) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `source_id` int(11) DEFAULT NULL,
   `banque` int(11) DEFAULT 0,
   `job` varchar(255) COLLATE utf8mb4_bin DEFAULT 'Chomeur',
   `faim` int(11) DEFAULT 100,

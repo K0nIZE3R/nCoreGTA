@@ -13,7 +13,8 @@ AddEventHandler('playerDropped', function(reason)
             local inventaire = json.encode(p.inventaire)
             local lastPosition = "{" .. p.pos.x .. ", " .. p.pos.y .. ",  " .. p.pos.z.. "}"
             local identity = json.encode(p.identiter)
-            MySQL.Sync.execute("UPDATE `gta_joueurs` SET inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
+            MySQL.Sync.execute("UPDATE `gta_joueurs` SET source_id = @Newsource, inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
+                ["@Newsource"] = p.source_id,
                 ["@inventaire"] = inventaire,
                 ["@newFaim"] = p.faim,
                 ["@newSoif"] = p.soif,
@@ -45,7 +46,8 @@ AddEventHandler("GTA:SyncPlayer", function()
         local inventaire = json.encode(p.inventaire)
         local lastPosition = "{" .. p.pos.x .. ", " .. p.pos.y .. ",  " .. p.pos.z.. "}"
         local identity = json.encode(p.identiter)
-        MySQL.Sync.execute("UPDATE `gta_joueurs` SET inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
+        MySQL.Sync.execute("UPDATE `gta_joueurs` SET source_id = @Newsource, inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
+            ["@Newsource"] = p.source_id,
             ["@inventaire"] = inventaire,
             ["@newFaim"] = p.faim,
             ["@newSoif"] = p.soif,
@@ -68,24 +70,13 @@ end)
 --[=====[
         Function Util pour le gcphone : 
 ]=====]
-math.randomseed(os.time()) 
-local function getPhoneRandomNumber()
+math.randomseed(os.time())
+function getPhoneRandomNumber()
    local numBase0 = math.random(100,999)
    local numBase1 = math.random(0,999)
    local num = string.format("%03d-%03d", numBase0, numBase1)
 
    return num
-end
-
-function getHistoriqueCall (num)
-   local res = MySQL.Async.execute("SELECT * FROM phone_calls WHERE owner = @num ORDER BY time DESC LIMIT 120", {['@num'] = num})	
-   return res
-end
-
-function sendHistoriqueCall(src, num) 
-   MySQL.Async.fetchAll('SELECT * FROM phone_calls WHERE owner = @num ORDER BY time DESC LIMIT 120',{['@num'] = num}, function(res)
-	   TriggerClientEvent('gcPhone:historiqueCall', src, res)
-   end)
 end
 
 --[=====[
@@ -95,6 +86,8 @@ RegisterServerEvent('GTA:CreationJoueur')  --> cette event sert uniquement a crÃ
 AddEventHandler('GTA:CreationJoueur', function()
 	local source = source
     local license = GetPlayerIdentifiers(source)[1]
+    local randomPhoneNumber = getPhoneRandomNumber() 
+
 
 	local result = MySQL.Sync.fetchAll("SELECT * FROM gta_joueurs WHERE license = @identifier", {
         ['@identifier'] = license
@@ -105,8 +98,7 @@ AddEventHandler('GTA:CreationJoueur', function()
 	--> Create Data player : 
 	if result[1] == nil then
     	MySQL.Async.execute('INSERT INTO gta_joueurs (`license`, `banque`, `inventaire`, `identiter`) VALUES (@license, @banque, @inventaire, @identiter)',{ ['@license'] = license, ['@banque'] = config.banque, ['@inventaire'] = "[]", ['@identiter'] = "[]"})
-		local randomPhoneNumber = getPhoneRandomNumber() 
-		PlayersSource[source].source = source
+        PlayersSource[source].source_id = source
         PlayersSource[source].inventaire = {}
         PlayersSource[source].identiter = {}
 		PlayersSource[source].faim = 100
@@ -127,7 +119,7 @@ AddEventHandler('GTA:CreationJoueur', function()
 		local inv = json.decode(result[1].inventaire)
 		local pos = json.decode(result[1].lastpos)
         local identiter = json.decode(result[1].identiter)
-        PlayersSource[source].source = source
+        PlayersSource[source].source_id = source
         PlayersSource[source].inventaire = inv
         PlayersSource[source].identiter = identiter
         PlayersSource[source].faim = result[1].faim
@@ -153,6 +145,8 @@ AddEventHandler('GTA:CreationJoueur', function()
     TriggerClientEvent("GTA:AfficherBanque", source, PlayersSource[source].banque)
     TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
 
+    Wait(1000)
+
 	local Myphone_number = MySQL.Sync.fetchScalar("SELECT phone_number FROM gta_joueurs WHERE license = @username", {['@username'] = license})
 	if Myphone_number then
 		TriggerClientEvent("gcPhone:myPhoneNumber", source, Myphone_number)
@@ -167,7 +161,9 @@ AddEventHandler('GTA:CreationJoueur', function()
 			end
 		end)
 
-		sendHistoriqueCall(source, Myphone_number)
+        MySQL.Async.fetchAll('SELECT * FROM phone_calls WHERE owner = @num ORDER BY time DESC LIMIT 120',{['@num'] = Myphone_number}, function(res)
+            TriggerClientEvent('gcPhone:historiqueCall', source, res)
+        end)
 	end
 end)
 
