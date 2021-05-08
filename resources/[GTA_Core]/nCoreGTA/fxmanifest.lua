@@ -27,12 +27,11 @@ client_scripts {
 
 exports {
     "GetPlayerJob",
-    "GetPlayerBank",
-    "GetPlayerInv",
-    "GetPlayerUniqueId",
-    "GetIsPlayerAdmin",
     "GetPlayerJobGrade",
-    "IsPlayerLoaded"
+    "GetIsPlayerInService",
+    "GetPlayerInv",
+    "GetIsPlayerAdmin",
+    "GetIsFirstConnexion"
 }
 
 

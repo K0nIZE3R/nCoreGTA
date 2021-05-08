@@ -10,20 +10,19 @@ end)
 --[=====[
         Notification :
 ]=====]
-
+--TriggerEvent("NUI-Notification", {"text"})
 RegisterNetEvent("NUI-Notification")
 AddEventHandler("NUI-Notification", function(t)
-    setmetatable(t,{__index={b = "success", c = "fa fa-handshake-o fa-2x", d = "row-reverse"}})
-    local textNotif, tType, iCon, pPos = t[1] or t.a, t[2] or t.b, t[3] or t.c, t[4] or t.d
+    setmetatable(t,{__index={b = "success"}})
+    local textNotif, tType, pPos = t[1] or t.a, t[2] or t.b
 
     exports.nMainNotification:GTA_NUI_ShowNotification({
         text = textNotif,
-        type = tType,
-        icon = iCon,
-        position = pPos
+        type = tType
     })
 end)
 
+--TriggerEvent("nMenuNotif:showNotification", "text")
 RegisterNetEvent('nMenuNotif:showNotification')
 AddEventHandler('nMenuNotif:showNotification', function(text)
     SetNotificationTextEntry( "STRING" )
@@ -31,21 +30,22 @@ AddEventHandler('nMenuNotif:showNotification', function(text)
 	DrawNotification( false, false )
 end)
 
+--TriggerEvent("GTAO:NotificationIcon", "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
 RegisterNetEvent('GTAO:NotificationIcon')
 AddEventHandler('GTAO:NotificationIcon', function(icon, title, soustitre, text)
-	soustitre = soustitre or " "
+	local soustitre = soustitre or " "
 	SetNotificationTextEntry("STRING")
 	AddTextComponentString(text)
 	SetNotificationMessage(icon, icon, true, 1, title, soustitre, text)
 	DrawNotification(false, true)
 end)
---TriggerEvent("GTAO:NotificationIcon", "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
 
 
 
 --[=====[
-            Marker Target :
+        Marker Target :
 ]=====]
+--TriggerEvent("ShowMarkerTarget")
 RegisterNetEvent("ShowMarkerTarget")
 AddEventHandler("ShowMarkerTarget", function()
     afficherMarkerTarget()
@@ -92,6 +92,7 @@ end
 --[=====[
             Play TaskStartScenarioInPlace :
 ]=====]
+--TriggerEvent("PlayTaskScenarioInPlace", GetPlayerPed(-1), "WORLD_HUMAN_SMOKING", -1)
 RegisterNetEvent("PlayTaskScenarioInPlace")
 AddEventHandler("PlayTaskScenarioInPlace", function(handle, animation, timer) 
 	TaskStartScenarioInPlace(handle, animation, 0, true)
@@ -104,6 +105,7 @@ end)
 --[=====[
             Play TaskPlayAnim :
 ]=====]
+--TriggerEvent("TaskPlayAnimation", GetPlayerPed(-1), "amb@world_human_golf_player@male@idle_a", "idle_a", -1)
 RegisterNetEvent("TaskPlayAnimation")
 AddEventHandler("TaskPlayAnimation", function(handle, dict, animation, duration, flags) 
 	duration = duration or -1
@@ -118,6 +120,7 @@ end)
 --[=====[
            Anim Set Attitude (demarche) :
 ]=====]
+--TriggerEvent("BeginRequestAnimSet", "move_m@hipster@a")
 RegisterNetEvent("BeginRequestAnimSet")
 AddEventHandler("BeginRequestAnimSet", function(animSet) 
 	if not HasAnimSetLoaded(animSet) then
@@ -136,6 +139,7 @@ end)
 --[=====[
             Show AlertNear :
 ]=====]
+--TriggerEvent("AlertNear", "Vous êtes proche d'une zone.")
 RegisterNetEvent("AlertNear")
 AddEventHandler("AlertNear", function(message) 
 	BeginTextCommandDisplayHelp("STRING");  
@@ -146,6 +150,7 @@ end)
 --[=====[
             Spawn Vehicule :
 ]=====]
+--TriggerEvent("SpawnVehicule", "luxor", position, "coucou")
 RegisterNetEvent("SpawnVehicule")
 AddEventHandler("SpawnVehicule", function(pVeh, pos, imatricule)
     local pVeh = GetHashKey(pVeh)
@@ -169,6 +174,7 @@ end)
 --[=====[
             Destroy Vehicule :
 ]=====]
+--TriggerEvent("DestroyVehicle", entity)
 RegisterNetEvent("DestroyVehicle")
 AddEventHandler("DestroyVehicle", function(entity)
     SetEntityAsMissionEntity(entity,true,true)
@@ -180,6 +186,7 @@ end)
             Play Sound List de sons : https://gtaforums.com/topic/795622-audio-for-mods
 			Exemple : TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "Radio_Off", "TAXI_SOUNDS")
 ]=====]
+--TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "sound", "dict")
 RegisterNetEvent("PlaySoundClient")
 AddEventHandler("PlaySoundClient", function(handle,sound,dict)
 	PlaySoundFromEntity(-1,tostring(sound),handle,tostring(dict), 0, 0)
@@ -224,4 +231,15 @@ AddEventHandler("GTA:UseItem", function(item_name, itemid)
             break
         end
     end
+end)
+
+
+--[=====[
+        Permet de refresh les nouvel donnée de votre métier job/grade/service sans devoir passé par la base de donnée :
+]=====]
+RegisterNetEvent("GTA_Metier:RefreshJobInformation")
+AddEventHandler("GTA_Metier:RefreshJobInformation", function(job, grade, service)
+    config.Player.job = job
+    config.Player.grade = grade
+	config.Player.enService = service
 end)

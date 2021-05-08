@@ -24,8 +24,7 @@ Citizen.CreateThread(function()
         RageUI.IsVisible(mainMenu, function()
             for _, v in pairs(listEmploi) do
                 RageUI.Button(v, "", {}, true, {onSelected = function()
-                    TriggerServerEvent("GTA:UpdateJob", v)
-                    TriggerServerEvent("GTA:LoadJobsJoueur")
+                    TriggerServerEvent("GTA_Metier:UpdateJob", v)
 	                TriggerEvent("NUI-Notification", {"Vous voici avec votre nouveau job "..v})
                     RageUI.CloseAll(true)
                 end});

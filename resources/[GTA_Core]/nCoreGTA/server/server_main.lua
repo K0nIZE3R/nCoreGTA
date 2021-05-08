@@ -144,6 +144,7 @@ AddEventHandler('GTA:CreationJoueur', function()
     TriggerClientEvent("GTA:LoadPlayerData", source, PlayersSource[source], config.itemList)
     TriggerClientEvent("GTA:AfficherBanque", source, PlayersSource[source].banque)
     TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
+    TriggerClientEvent("GTA_Metier:RefreshJobInformation", source, PlayersSource[source].job, PlayersSource[source].grade, PlayersSource[source].enService)
 
     Wait(1000)
 

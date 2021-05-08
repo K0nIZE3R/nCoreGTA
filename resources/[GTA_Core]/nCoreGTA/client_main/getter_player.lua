@@ -12,9 +12,9 @@ function GetPlayerJobGrade()
     return config.Player.grade
 end
 
---exports.nCoreGTA:GetPlayerBank()
-function GetPlayerBank()
-    return config.Player.banque
+--exports.nCoreGTA:GetIsPlayerInService()
+function GetIsPlayerInService()
+    return config.Player.enService
 end
 
 --exports.nCoreGTA:GetPlayerInv()

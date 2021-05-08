@@ -13,6 +13,11 @@ Ninja_Core__DisplayHelpAlert = function(msg)
     EndTextCommandDisplayHelp(0, 0, 1, -1);
 end
 
+RegisterNetEvent("GTA_Vetement:PaiementAccepter")
+AddEventHandler("GTA_Vetement:PaiementAccepter", function(itemid, prix)
+    TriggerServerEvent("GTA:PaiementCash", "cash", itemid, prix)
+end)
+
 square = math.sqrt
 function getDistance(a, b) 
   local x, y, z = a.x-b.x, a.y-b.y, a.z-b.z

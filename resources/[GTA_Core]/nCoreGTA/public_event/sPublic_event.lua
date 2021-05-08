@@ -1,29 +1,11 @@
---[[
-RegisterNetEvent('GTA:GetAllHandleItems')  --> cette event sert uniquement a get toute les items de l'inventaire d'une source ou target pour l'afficher par exemple sur un menu.
-AddEventHandler('GTA:GetAllHandleItems', function(handle, callback)
-    local items = {}
-    local source = handle
-    local license = GetPlayerIdentifiers(source)[1]
+local items = config.itemList
+local __RoundNumber = function(value, numDecimalPlaces)
+	return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", value))
+end
 
-    MySQL.Async.fetchAll("SELECT * FROM user_inventory JOIN items ON `user_inventory`.`item_id` = `items`.`id` WHERE license=@username", { ['@username'] = license}, function(result)
-        if (result) then
-            for _,v in pairs(result) do
-				t = { ["quantity"] = v.quantity, ["libelle"] = v.libelle, ["isUsable"] = v.isUsable, ["type"] = v.type }
-				items[v.item_id] = t
-			end
-        end
-
-        if callback then
-            if (items ~= nil) then
-                callback(items)
-            end
-        end
-    end)
-end)
---]]
 
 --[=====[
-        Return le sex de votre perso :
+    	Cette event est utilisé pour récuperer le sex de votre perso : 
 ]=====]
 RegisterNetEvent('GTA:GetUserSex')  --> cette event sert uniquement a get la quantité d'un item server-side.
 AddEventHandler('GTA:GetUserSex', function(license, callback)
@@ -38,7 +20,7 @@ end)
 
 
 --[=====[
-        Salaire toute les 15 minutes:
+    	Cette event est utilisé pour donné un salaire au joueur toute les 15 minute : 
 ]=====]
 RegisterNetEvent('GTA:salaire')
 AddEventHandler('GTA:salaire', function()
@@ -54,7 +36,7 @@ end)
 
 
 --[=====[
-        Food :
+    	Cette event est utilisé pour update les nouvel donnée "faim" du joueur : 
 ]=====]
 RegisterNetEvent("nSetFaim")
 AddEventHandler("nSetFaim", function(faim)
@@ -62,26 +44,30 @@ AddEventHandler("nSetFaim", function(faim)
 	PlayersSource[source].faim = faim
 end)
 
+--[=====[
+    	Cette event est utilisé pour update les nouvel donnée "soif" du joueur : 
+]=====]
 RegisterNetEvent("nSetSoif")
 AddEventHandler("nSetSoif", function(soif)
 	local source = source
 	PlayersSource[source].soif = soif
 end)
 
+
+
 --[=====[
-    	Sauvegarde de la pos du joueur : 
+    	Cette event est utile pour sauvegarde la pos du joueur : 
 ]=====]
 RegisterNetEvent("GTA:SavePos")
 AddEventHandler("GTA:SavePos", function(pos)
 	local source = source
     PlayersSource[source].pos = pos
-	TriggerClientEvent("NUI-Notification", source, {"Position Sauvegarder."})
 end)
 
 
 
 --[=====[
-    	Changement d'identité :
+    	Cette event est utilisé pour le changement d'identité :
 ]=====]
 RegisterNetEvent("GTA:UpdateIdentiter")
 AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
@@ -103,7 +89,7 @@ end)
 
 
 --[=====[
-    	Cette event vous retourne les informations de votre player ou target pour afficher les info de la carte d'identité :
+    	Cette event vous retourne les informations de votre player ou target utile pour afficher les info de la carte d'identité :
 ]=====]
 RegisterNetEvent("GTA:GetPlayerInformationsIdentiter")
 AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
@@ -133,4 +119,40 @@ end)
 RegisterServerEvent('GTA:GetArgentBanque')
 AddEventHandler('GTA:GetArgentBanque', function(source, callback)
 	callback(PlayersSource[source].banque)
+end)
+
+
+--[=====[
+    	cette event sert uniquement a faire des paiement avec votre argent propre :
+]=====]
+RegisterServerEvent('GTA:PaiementCash')
+AddEventHandler('GTA:PaiementCash', function(item, itemid, count)
+	local source = source
+    if items[item] ~= nil then
+        if PlayersSource[source].inventaire[itemid] ~= nil then -- Item do not exist in inventory
+            if  PlayersSource[source].inventaire[itemid].count - __RoundNumber(count) <= 0 then -- If count < or = 0 after removing item count, then deleting it from player inv
+                PlayersSource[source].inventaire[itemid].count = 0
+            else
+                PlayersSource[source].inventaire[itemid].count = PlayersSource[source].inventaire[itemid].count - __RoundNumber(count)
+				TriggerClientEvent("GTAO:NotificationIcon", source, "CHAR_BANK_MAZE", "Maze Bank", "- : ~g~" ..count.. " $", "Paiement reussi")
+            end
+
+            TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
+        end
+    end
+end)
+
+--[=====[
+    	cette event sert uniquement a update votre job :
+]=====]
+RegisterServerEvent('GTA_Metier:UpdateJob')
+AddEventHandler('GTA_Metier:UpdateJob', function(metiers, grade, service)
+	local source = source
+	local job = tostring(metiers)
+	PlayersSource[source].job = job or PlayersSource[source].job
+	PlayersSource[source].grade = grade or PlayersSource[source].grade
+	PlayersSource[source].enService = service or PlayersSource[source].enService
+
+	--Update Client side ..
+    TriggerClientEvent("GTA_Metier:RefreshJobInformation", source, PlayersSource[source].job, PlayersSource[source].grade, PlayersSource[source].enService)
 end)
