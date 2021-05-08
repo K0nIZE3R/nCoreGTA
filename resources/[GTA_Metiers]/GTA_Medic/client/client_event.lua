@@ -3,27 +3,6 @@ local factureMontant = 0
 local Duree = 1000
 
 
-RegisterNetEvent("GTA_Medic:AjoutArgentPropre")
-AddEventHandler("GTA_Medic:AjoutArgentPropre", function(qty)
-   TriggerServerEvent("GTA:ReceiveItem", "cash", qty)
-end)
-
-RegisterNetEvent("GTA_Medic:AjoutArgentSale")
-AddEventHandler("GTA_Medic:AjoutArgentSale", function(qty)
-   TriggerServerEvent("GTA:ReceiveItem", "dirty", qty)
-end)
-
-RegisterNetEvent("GTA_Medic:RetirerArgentPropre")
-AddEventHandler("GTA_Medic:RetirerArgentPropre", function(item_name, itemid, qty)
-   TriggerServerEvent("GTA:RemoveItem", item_name, itemid, qty)
-end)
-
-RegisterNetEvent("GTA_Medic:RetirerArgentSale")
-AddEventHandler("GTA_Medic:RetirerArgentSale", function(item_name, itemid, qty)
-   TriggerServerEvent("GTA:RemoveItem", item_name, itemid, qty)
-end)
-
-
 RegisterNetEvent("GTA_Medic:HealhTarget")
 AddEventHandler("GTA_Medic:HealhTarget", function()
     local ped = GetPlayerPed(-1)

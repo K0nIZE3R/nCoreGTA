@@ -7,6 +7,9 @@ AddEventHandler('playerSpawned', function()
     TriggerServerEvent('GTA:requestSync')
 end)
 
+
+
+
 --[=====[
         Notification :
 ]=====]
@@ -22,6 +25,9 @@ AddEventHandler("NUI-Notification", function(t)
     })
 end)
 
+
+
+
 --TriggerEvent("nMenuNotif:showNotification", "text")
 RegisterNetEvent('nMenuNotif:showNotification')
 AddEventHandler('nMenuNotif:showNotification', function(text)
@@ -29,6 +35,8 @@ AddEventHandler('nMenuNotif:showNotification', function(text)
     AddTextComponentString( text )
 	DrawNotification( false, false )
 end)
+
+
 
 --TriggerEvent("GTAO:NotificationIcon", "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
 RegisterNetEvent('GTAO:NotificationIcon')
@@ -89,6 +97,9 @@ function afficherMarkerTarget()
 	end
 end
 
+
+
+
 --[=====[
             Play TaskStartScenarioInPlace :
 ]=====]
@@ -99,6 +110,9 @@ AddEventHandler("PlayTaskScenarioInPlace", function(handle, animation, timer)
 	Citizen.Wait(timer)
 	ClearPedTasks(handle)
 end)
+
+
+
 
 
 --[=====[
@@ -115,6 +129,9 @@ AddEventHandler("TaskPlayAnimation", function(handle, dict, animation, duration,
 	end
 	TaskPlayAnim(handle, dict, animation, 8.0, -8, duration, flags, 0, 0, 0, 0)
 end)
+
+
+
 
 --[=====[
            Anim Set Attitude (demarche) :
@@ -146,6 +163,11 @@ AddEventHandler("AlertNear", function(message)
     EndTextCommandDisplayHelp(0, 0, 1, -1);
 end)
 
+
+
+
+
+
 --[=====[
             Spawn Vehicule :
 ]=====]
@@ -170,6 +192,9 @@ AddEventHandler("SpawnVehicule", function(pVeh, pos, imatricule)
 end)
 
 
+
+
+
 --[=====[
             Destroy Vehicule :
 ]=====]
@@ -181,6 +206,10 @@ AddEventHandler("DestroyVehicle", function(entity)
     TriggerEvent("NUI-Notification", {"Véhicule détruit."})
 end)
 
+
+
+
+
 --[=====[
             Play Sound List de sons : https://gtaforums.com/topic/795622-audio-for-mods
 			Exemple : TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "Radio_Off", "TAXI_SOUNDS")
@@ -190,6 +219,10 @@ RegisterNetEvent("PlaySoundClient")
 AddEventHandler("PlaySoundClient", function(handle,sound,dict)
 	PlaySoundFromEntity(-1,tostring(sound),handle,tostring(dict), 0, 0)
 end)
+
+
+
+
 
 --[=====[
         Permet de refresh les nouvel donnée de l'inventaire sans devoir passé par la base de donnée :
@@ -202,15 +235,23 @@ AddEventHandler("GTA:Refreshinventaire", function(inv, weight)
     TriggerEvent("GTA:UpdateInventaire", config.Player.inventaire, config.Player.weight)
 end)
 
+
+
+
+
 --[=====[
         Permet de refresh les nouvel donnée de votre argent en banque utile si vous l'afficher :
 ]=====]
 RegisterNetEvent("GTA:AfficherBanque")
 AddEventHandler("GTA:AfficherBanque", function(value)
-	--> On passe ici pour update la valeur de votre argent en banque du "getter_player" : GetPlayerBank.
 	config.Player.banque = value
 end)
 
+
+
+--[=====[
+        Permet d'utilisé un item avec différent action possible :
+]=====]
 local items = config.itemList
 RegisterNetEvent("GTA:UseItem")
 AddEventHandler("GTA:UseItem", function(item_name, itemid)
@@ -241,4 +282,24 @@ AddEventHandler("GTA:RefreshJobInformation", function(job, grade, service)
     config.Player.job = job
     config.Player.grade = grade
 	config.Player.enService = service
+end)
+
+
+--[=====[
+        Permet de retirer un item de votre inventaire :
+		Utilisation : TriggerClientEvent("GTA_Inventaire:RetirerItem", item_name, itemid, qty)
+]=====]
+RegisterNetEvent("GTA_Inventaire:RetirerItem")
+AddEventHandler("GTA_Inventaire:RetirerItem", function(item_name, itemid, qty)
+   TriggerServerEvent("GTA:RemoveItem", item_name, itemid, qty)
+end)
+
+
+--[=====[
+        Permet d'ajouter un item dans votre inventaire :
+		Utilisation : TriggerClientEvent("GTA_Inventaire:AjouterItem", item_name, qty)
+]=====]
+RegisterNetEvent("GTA_Inventaire:AjouterItem")
+AddEventHandler("GTA_Inventaire:AjouterItem", function(item_name, qty)
+   TriggerServerEvent("GTA:ReceiveItem", item_name, qty)
 end)

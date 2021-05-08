@@ -55,6 +55,8 @@ end)
 
 RegisterNetEvent("GTA:SpawnPlayer")
 AddEventHandler("GTA:SpawnPlayer", function()
+    Wait(1500)
+    
     if  (GetIsFirstConnexion() == false) then
         SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
         NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)

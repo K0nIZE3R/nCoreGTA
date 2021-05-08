@@ -88,7 +88,7 @@ AddEventHandler("GTA_Medic:RetirerArgentPropreStockage", function(qty)
         if (argentPropre >= qty) then
             argentPropre = argentPropre - qty
             MySQL.Async.execute("UPDATE gta_medic_stockage SET argent=@newArgent", {['@newArgent'] = tonumber(argentPropre)})
-            TriggerClientEvent("GTA_Medic:AjoutArgentPropre", source, qty)
+            TriggerClientEvent("GTA_Inventaire:AjouterItem", source, "cash", qty)
             TriggerClientEvent("NUI-Notification", source, {"Vous avez retirer de l'argent propre dans le coffre."})
         else
             TriggerClientEvent("NUI-Notification", source, {"Montant supérieur au montant disponible.", "warning"})
@@ -104,7 +104,7 @@ AddEventHandler("GTA_Medic:RetirerArgentSaleStockage", function(qty)
         if (argentSale >= qty) then
             argentSale = argentSale - qty
             MySQL.Async.execute("UPDATE gta_medic_stockage SET argent_sale=@newArgent", {['@newArgent'] = tonumber(argentSale)})
-            TriggerClientEvent("GTA_Medic:AjoutArgentSale", source, qty)
+            TriggerClientEvent("GTA_Inventaire:AjouterItem", source, "dirty", qty)
             TriggerClientEvent("NUI-Notification",source, {"Vous avez retirer de l'argent sale dans le coffre."})
         else
             TriggerClientEvent("NUI-Notification", source, {"Montant supérieur au montant disponible.", "warning"})
@@ -121,7 +121,7 @@ AddEventHandler("GTA_Medic:DeposerArgentPropreStockage", function(qty)
             MySQL.Async.fetchAll('SELECT argent FROM gta_medic_stockage',{}, function(res)
                 local argentPropre = res[1].argent + qty
                 MySQL.Async.execute("UPDATE gta_medic_stockage SET argent=@newArgent", {['@newArgent'] = tonumber(argentPropre)})
-                TriggerClientEvent('GTA_Medic:RetirerArgentPropre', source,"cash", itemid, qty)
+                TriggerClientEvent('GTA_Inventaire:RetirerItem', source, "cash", itemid, qty)
                 TriggerClientEvent("NUI-Notification", source, {"Vous avez deposer de l'argent propre dans le coffre."})
             end)
         else
@@ -139,7 +139,7 @@ AddEventHandler("GTA_Medic:DeposerArgentSaleStockage", function(qty)
             MySQL.Async.fetchAll('SELECT argent_sale FROM gta_medic_stockage',{}, function(res)
                 local argentSale = res[1].argent_sale + qty
                 MySQL.Async.execute("UPDATE gta_medic_stockage SET argent_sale=@newArgent", {['@newArgent'] = tonumber(argentSale)})
-                TriggerClientEvent('GTA_Medic:RetirerArgentSale', source, "dirty", itemid, qty)
+                TriggerClientEvent('GTA_Inventaire:RetirerItem', source, "dirty", itemid, qty)
                 TriggerClientEvent("NUI-Notification", source, {"Vous avez deposer de l'argent sale dans le coffre."})
             end)
         else
