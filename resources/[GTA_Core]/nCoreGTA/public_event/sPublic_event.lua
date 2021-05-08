@@ -153,6 +153,5 @@ AddEventHandler('GTA_Metier:UpdateJob', function(metiers, grade, service)
 	PlayersSource[source].grade = grade or PlayersSource[source].grade
 	PlayersSource[source].enService = service or PlayersSource[source].enService
 
-	--Update Client side ..
-    TriggerClientEvent("GTA_Metier:RefreshJobInformation", source, PlayersSource[source].job, PlayersSource[source].grade, PlayersSource[source].enService)
+    TriggerClientEvent("GTA:RefreshJobInformation", source, PlayersSource[source].job, PlayersSource[source].grade, PlayersSource[source].enService)
 end)

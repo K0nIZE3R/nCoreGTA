@@ -98,7 +98,6 @@ AddEventHandler("PlayTaskScenarioInPlace", function(handle, animation, timer)
 	TaskStartScenarioInPlace(handle, animation, 0, true)
 	Citizen.Wait(timer)
 	ClearPedTasks(handle)
-	exports.rprogress:Start("Action en cours", timer)
 end)
 
 
@@ -237,8 +236,8 @@ end)
 --[=====[
         Permet de refresh les nouvel donnée de votre métier job/grade/service sans devoir passé par la base de donnée :
 ]=====]
-RegisterNetEvent("GTA_Metier:RefreshJobInformation")
-AddEventHandler("GTA_Metier:RefreshJobInformation", function(job, grade, service)
+RegisterNetEvent("GTA:RefreshJobInformation")
+AddEventHandler("GTA:RefreshJobInformation", function(job, grade, service)
     config.Player.job = job
     config.Player.grade = grade
 	config.Player.enService = service

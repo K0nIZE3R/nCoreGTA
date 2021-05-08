@@ -17,7 +17,7 @@ Je prévoit d'ouvrir très prochainement un site internet dans le quel je partag
 **Information:**
 Hey, pour tout les nouveau qui souhaite débuté avec la source, voici quelque conseil : 
 
-- Lisez attentivement le code, essayé de comprendre leur fonctionnement, si vous avez une question utilisé notre discord : https://discord.gg/uQVjDzzweg
+- Lisez attentivement le code, essayé de comprendre leur fonctionnement, si vous avez une question utilisé notre discord : https://discord.gg/Ed9782T3P7
 - Modifier ce que vous pouvez tout en comprenant ce que vous faite, c'est très important ! 
 - Vérifier souvent le github des mise a jours y sont souvent posté.
 - Avant de posé une question vérifier le salon #𝙩𝙪𝙩𝙤𝙧𝙞𝙖𝙡-𝙨𝙤𝙪𝙧𝙘𝙚 que vous trouverez sur notre discord.
@@ -44,7 +44,7 @@ Bon Dev à vous, encore une fois je suis disponible à vos questions. :rocket:
 
 
 ## Discord SourceV2 :
-https://discord.gg/uQVjDzzweg
+https://discord.gg/Ed9782T3P7
 
 
 ## Installation :
