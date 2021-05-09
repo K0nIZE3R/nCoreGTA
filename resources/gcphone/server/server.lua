@@ -3,6 +3,19 @@
 -- #Version 2.0
 -- Rework by Super.Cool.Ninja for nCoreGTA.
 --====================================================================================
+RegisterNetEvent("GTA_Phone:RequestOpenPhone")
+AddEventHandler("GTA_Phone:RequestOpenPhone", function(canOpen) 
+    TriggerEvent('GTA:GetItemQty', source, "phone", function(qtyItem, itemid)
+        if (qtyItem > 0) then 
+            canOpen = true
+        else
+            canOpen = false
+        end
+    end)
+    TriggerClientEvent("GTA_Phone:PlayerHavePhone", source, canOpen)
+end)
+
+
 math.randomseed(os.time()) 
 
 --- Pour les numero du style XXX-XXXX
