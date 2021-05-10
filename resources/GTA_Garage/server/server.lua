@@ -13,15 +13,17 @@ AddEventHandler('garages:PutAllVehInGarages', function()
 	local player = GetPlayerIdentifiers(source)[1]
 
 	MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET vehicle_state = vehicle_state WHERE identifier = @identifier", { 
-        ['@identifier'] = player,
-        ['@vehicle_state'] = "Rentré"
+        ['@vehicle_state'] = "Rentré",
+        ['@identifier'] = player
     })
 end)
 
 RegisterServerEvent('garages:RemoveVehicule')
 AddEventHandler('garages:RemoveVehicule', function(plaque)
-	MySQL.Sync.execute("DELETE FROM gta_joueurs_vehicle WHERE vehicle_plate = @plate", {['@plate'] = tostring(plaque)})
-	TriggerEvent("GTA-Coffre:resetItem", plaque)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	MySQL.Sync.execute("DELETE FROM gta_joueurs_vehicle WHERE vehicle_plate = @plate and identifier = @identifier", {['@plate'] = tostring(plaque), ['@identifier'] = player})
+	--TriggerEvent("GTA-Coffre:resetItem", plaque)
 end)
 
 local vehicles = {}
@@ -29,9 +31,10 @@ RegisterServerEvent('garages:GetVehiclesList')
 AddEventHandler('garages:GetVehiclesList', function(garage)
 	vehicles = {}
 	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
 	local zone = garage["NomZone"]
 
-    MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @username",{['@username'] = tostring(zone)}, function(result)
+    MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @garage and identifier = @identifier",{['@garage'] = tostring(zone), ['@identifier'] = player}, function(result)
 		for _, v in pairs(result) do
 			table.insert(vehicles, {name = v.vehicle_name, plaque = v.vehicle_plate, state = v.vehicle_state})
 		end
@@ -43,15 +46,14 @@ end)
 RegisterServerEvent('garages:CheckForSpawnVeh')
 AddEventHandler('garages:CheckForSpawnVeh', function(vehiclename, garage, immatricule)
 	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
 	local zone = garage["NomZone"]
 
-	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @zone AND vehicle_name = @vehicle_name",{['@zone'] = tostring(zone), ['@vehicle_name'] = vehiclename}, function(result)
-		if immatricule ~= result[1].vehicle_plate then
-			if result[1].vehicle_state == "Sortit" then
-				TriggerClientEvent('nMenuNotif:showNotification', source, "Ce véhicule ne se trouve pas dans votre garage.")
-			end
+	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE vehicle_plate = @immatricule AND identifier = @identifier",{['@immatricule'] = tostring(immatricule), ['@identifier'] = player}, function(result)
+		if (result[1].vehicle_state == "Sortit") then
+			TriggerClientEvent("NUI-Notification", source, {"Ce véhicule se trouve à l'extérieur de votre garage."})
 		else
-			TriggerClientEvent('garages:SpawnVehicle', source, result[1].vehicle_state,result[1].vehicle_model,result[1].vehicle_plate,result[1].vehicle_plateindex,result[1].vehicle_colorprimary,result[1].vehicle_colorsecondary,result[1].vehicle_pearlescentcolor,result[1].vehicle_wheelcolor)
+			TriggerClientEvent('garages:SpawnVehicle', source, result[1].vehicle_state, tonumber(result[1].vehicle_model),result[1].vehicle_plate,result[1].vehicle_plateindex,result[1].vehicle_colorprimary,result[1].vehicle_colorsecondary,result[1].vehicle_pearlescentcolor,result[1].vehicle_wheelcolor)
 		end
 	end)
 end)
@@ -59,115 +61,320 @@ end)
 RegisterServerEvent('garages:RenameVeh')
 AddEventHandler('garages:RenameVeh', function(vehiclename, plaque)
 	local source = source
-	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate AND vehicle_name = @vehicle_name",{['@vehicle_plate'] = plaque, ['@vehicle_name'] = vehiclename}, function(result)
+	MySQL.Async.fetchAll("SELECT vehicle_name, vehicle_plate FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate AND vehicle_name = @vehicle_name",{['@vehicle_plate'] = plaque, ['@vehicle_name'] = vehiclename}, function(result)
 		TriggerClientEvent('garages:RenomerVeh', source, result[1].vehicle_name, result[1].vehicle_plate)
 	end)
 end)
 
 RegisterServerEvent('garages:NewVehiculeName')
 AddEventHandler('garages:NewVehiculeName', function(newVehicleName, plaque)
-	MySQL.Async.execute("UPDATE gta_joueurs_vehicle SET vehicle_name = @vehicle_name WHERE vehicle_plate = @vehicle_plate", { 
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+
+	MySQL.Async.execute("UPDATE gta_joueurs_vehicle SET vehicle_name = @vehicle_name WHERE vehicle_plate = @vehicle_plate and identifier = @identifier", { 
         ['@vehicle_name'] = newVehicleName,
-        ['@vehicle_plate'] = plaque
+        ['@vehicle_plate'] = plaque,
+        ['@identifier'] = player
     })
 end)
 
-
 local vehicle_plate_list = {}
 RegisterServerEvent('garages:CheckForVeh')
-AddEventHandler('garages:CheckForVeh', function(garage)
+AddEventHandler('garages:CheckForVeh', function(immatri)
 	vehicle_plate_list = {}
 	local source = source
-	local maxEmplacement = garage["MaxVeh"]
-	local zone = garage["NomZone"]
+	local player = GetPlayerIdentifiers(source)[1]
+	local plate = nil
 
-	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @nom", {['@nom'] = tostring(zone)}, function(res)
+
+	MySQL.Async.fetchAll("SELECT vehicle_plate, proprietaire  FROM gta_joueurs_vehicle WHERE identifier = @identifier", {['@identifier'] = player}, function(res)
 		for _, v in pairs(res) do
-			table.insert(vehicle_plate_list, v.vehicle_plate)
+			if (v.vehicle_plate == immatri and v.proprietaire ~= "volé") then
+				TriggerClientEvent('garages:StoreVehicle', source, v.vehicle_plate)
+				return
+			end
 		end
-
-		if (#res ~= 0) then
-			TriggerClientEvent('garages:StoreVehicle', source, zone, vehicle_plate_list, maxEmplacement)
-		else
-			TriggerClientEvent('garages:StoreFirstVehicle', source, zone)
-		end
+		TriggerClientEvent('garages:StoreVehicleStolen', source, immatri)
 	end)
 end)
 
-RegisterServerEvent('garages:CheckVehiculeAntiDupli')
-AddEventHandler('garages:CheckVehiculeAntiDupli', function(garage)
+local vehicle_plate_list_stolen = {}
+RegisterServerEvent('garages:NewStolenCar')
+AddEventHandler('garages:NewStolenCar', function(model, immatricul, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, vehicle, max, GetInfoGarage)
 	local source = source
-	local zone = garage["NomZone"]
+	local player = GetPlayerIdentifiers(source)[1]
+	local zone = GetInfoGarage["NomZone"]
+	local maxEmplacement = GetInfoGarage["MaxVeh"]
+	local value = {player, "Vehicule Moldu", model, immatricul, "Rentré", primarycolor, secondarycolor, pearlescentcolor, wheelcolor, zone, "Volé", 0}
+	vehicle_plate_list_stolen = {}
 
-	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @nom", {['@nom'] = tostring(zone)}, function(res)
-        local dupli = MySQL.Sync.fetchScalar("SELECT vehicle_plate FROM gta_joueurs_vehicle GROUP BY vehicle_plate HAVING COUNT(vehicle_plate) > 1")
-		if dupli then 
-			MySQL.Sync.execute("DELETE FROM gta_joueurs_vehicle WHERE proprietaire = @proprietaire AND zone_garage = @zone_garage", {['@proprietaire'] = tostring("Volé"), ['@zone_garage'] = tostring(zone)})
+	MySQL.Async.fetchAll("SELECT vehicle_plate FROM gta_joueurs_vehicle WHERE identifier = @identifier", {['@identifier'] = player}, function(res)
+		if (res[1] ~= nil) then
+			for _, v in pairs(res) do
+				table.insert(vehicle_plate_list_stolen, v.vehicle_plate)
+			end
+		
+			if (max <= maxEmplacement) then
+				if (immatri == vehicle_plate_list_stolen[1]) then
+					TriggerClientEvent('garages:StoreVehicle', source, vehicle_plate_list_stolen)
+					TriggerClientEvent("garages:RefreshIsVehExist", source, vehicle)
+				else 
+					MySQL.Sync.execute('INSERT INTO gta_joueurs_vehicle (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `zone_garage`, `proprietaire`, `prix`) VALUES ?', { { value } })
+					TriggerClientEvent("garages:RefreshIsVehExist", source, vehicle)
+				end
+			else
+				TriggerClientEvent("NUI-Notification", source, {"Ce garage est complet."})
+			end
+		else
+			MySQL.Sync.execute('INSERT INTO gta_joueurs_vehicle (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `zone_garage`, `proprietaire`, `prix`) VALUES ?', { { value } })
+			TriggerClientEvent("garages:RefreshIsVehExist", source, vehicle)
 		end
 	end)
 end)
 
 RegisterServerEvent('garages:CheckDuplicationVeh')
-AddEventHandler('garages:CheckDuplicationVeh', function(zone, plate)
+AddEventHandler('garages:CheckDuplicationVeh', function(model, immatricul, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, zoneGarage, vehicle)
 	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
 	local dupli = MySQL.Sync.fetchScalar("SELECT vehicle_plate FROM gta_joueurs_vehicle GROUP BY vehicle_plate HAVING COUNT(vehicle_plate) > 1")
+	
 	if dupli then 
-		local zoneDupli = MySQL.Sync.fetchScalar("SELECT zone_garage FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate", {['@vehicle_plate'] = plate})
-		if zoneDupli == "Aucun" then
-			MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET zone_garage = @zone_garage WHERE vehicle_plate = @vehicle_plate", { 
-				['@zone_garage'] = tostring(zone),
-				['@vehicle_plate'] = plate
-			})
-
-			MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET ? WHERE ?", { {['vehicle_state'] = tostring("Rentré")}, {['vehicle_plate'] = plate}})
-		else
-			MySQL.Sync.execute("DELETE FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate AND zone_garage = @zone_garage", {['@vehicle_plate'] = tostring(dupli), ['@zone_garage'] = tostring(zone)})
-			
-			MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET ? WHERE ?", { {['vehicle_state'] = tostring("Rentré")}, {['vehicle_plate'] = plate}})
-			TriggerClientEvent('nMenuNotif:showNotification', source, "~r~ Duplication de véhicule détecter, le véhicule à été automatiquement remis dans votre garage.")
-		end
+		TriggerClientEvent("NUI-Notification", source, {"Duplication de véhicule détecter, le véhicule ne peut pas être ranger dans ce garage."})
+	else
+		MySQL.Sync.execute("INSERT INTO gta_joueurs_vehicle  (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `zone_garage`) VALUES(@identifier, @vehicle_name, @vehicle_model, @vehicle_plate, @vehicle_state, @vehicle_colorprimary, @vehicle_colorsecondary, @vehicle_pearlescentcolor, @vehicle_wheelcolor, @zone_garage)", {
+			['@identifier'] = player,
+			['@vehicle_name'] = "Mon vehicule",
+			['@vehicle_model'] = model,
+			['@vehicle_plate'] = plate,
+			['@vehicle_state'] = "Rentré",
+			['@vehicle_colorprimary'] = primarycolor,
+			['@vehicle_colorsecondary'] = secondarycolor,
+			['@vehicle_pearlescentcolor'] = pearlescentcolor,
+			['@vehicle_wheelcolor'] = wheelcolor,
+			['@zone_garage'] = zone_garage
+		})
+		TriggerClientEvent("garages:RefreshIsVehExist", source, vehicle)
 	end
 end)
 
 RegisterServerEvent('garages:GetEmplacement')
 AddEventHandler('garages:GetEmplacement', function(zone)
 	local source = source
-	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @nom", {['@nom'] = tostring(zone)}, function(res)
+	local player = GetPlayerIdentifiers(source)[1]
+
+	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE zone_garage = @nom and identifier = @identifier", {['@nom'] = tostring(zone), ['@identifier'] = player}, function(res)
 		TriggerClientEvent('garages:UpdateEmplacementDispo', source, #res)
 	end)
 end)
 
 RegisterServerEvent('garages:SetVehOut')
 AddEventHandler('garages:SetVehOut', function(plate)
-	MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET vehicle_state = @vehicle_state WHERE vehicle_plate = @vehicle_plate", { 
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET vehicle_state = @vehicle_state WHERE vehicle_plate = @vehicle_plate and identifier = @identifier", { 
 		['@vehicle_state'] = "Sortit",
-		['@vehicle_plate'] = plate
+		['@vehicle_plate'] = plate,
+		['@identifier'] = player
 	})
 end)
 
 RegisterServerEvent('garages:SetVehIn')
-AddEventHandler('garages:SetVehIn', function(plate)
-	MySQL.Sync.execute("UPDATE gta_joueurs_vehicle SET vehicle_state = @vehicle_state WHERE vehicle_plate = @vehicle_plate", { 
-		['@vehicle_state'] = "Rentré",
-		['@vehicle_plate'] = plate
-	})
-end)
-
-RegisterServerEvent('garages:SetVehicule')
-AddEventHandler('garages:SetVehicule', function(nameCar, model, plate, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, zone_garage)
+AddEventHandler('garages:SetVehIn', function(model, immatricul, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, vehicle, max, garage)
 	local source = source
 	local player = GetPlayerIdentifiers(source)[1]
+	local maxEmplacement = garage["MaxVeh"]
+	local zone = garage["NomZone"]
 
-	MySQL.Sync.execute("INSERT INTO gta_joueurs_vehicle  (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `zone_garage`) VALUES(@identifier, @vehicle_name, @vehicle_model, @vehicle_plate, @vehicle_state, @vehicle_colorprimary, @vehicle_colorsecondary, @vehicle_pearlescentcolor, @vehicle_wheelcolor, @zone_garage)", {
-		['@identifier'] = player,
-		['@vehicle_name'] = nameCar,
-		['@vehicle_model'] = model,
-		['@vehicle_plate'] = plate,
-		['@vehicle_state'] = "Rentré",
-		['@vehicle_colorprimary'] = primarycolor,
-		['@vehicle_colorsecondary'] = secondarycolor,
-		['@vehicle_pearlescentcolor'] = pearlescentcolor,
-		['@vehicle_wheelcolor'] = wheelcolor,
-		['@zone_garage'] = zone_garage
-	})
+	MySQL.Async.execute( "UPDATE gta_joueurs_vehicle SET vehicle_state=@vehicle_state, zone_garage=@zone_garage WHERE vehicle_plate=@vehicle_plate and identifier = @identifier", {
+	['@vehicle_plate'] = immatricul,
+	['@identifier'] = player,
+	['@vehicle_state'] = "Rentré",
+	['@zone_garage'] = tostring(zone)})
+end)
+
+
+RegisterServerEvent('GTA_Receler:RequestVenteVehicule')
+AddEventHandler('GTA_Receler:RequestVenteVehicule', function(plate, vehicule)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	local price = 0
+	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate and identifier = @identifier", {['@vehicle_plate'] = tostring(plate), ['@identifier'] = player}, function(res)
+		if (res[1] ~= nil) then
+			if (res[1].proprietaire == "Volé") then 
+				TriggerClientEvent("NUI-Notification", source, {"Ce véhicule ne peut pas être revendu il est volé."})
+			else
+				price = (price /2) + res[1].prix
+				MySQL.Sync.execute("DELETE FROM gta_joueurs_vehicle WHERE vehicle_plate = @plate and identifier = @identifier", {['@plate'] = tostring(plate), ['@identifier'] = player})
+				MySQL.Sync.execute("DELETE FROM `cles_vehicule` WHERE license = @player AND plate = @plate", { 
+					['@player'] = player,
+					['@plate'] = plate
+				})
+				TriggerClientEvent("garages:RefreshIsVehExist", source, vehicule)
+				TriggerClientEvent("GTA_Inventaire:AjouterItem", source, "cash", price)
+				TriggerClientEvent("NUI-Notification", source, {"Véhicule revendu pour "..price .. "$"})
+			end
+		else
+			TriggerClientEvent("NUI-Notification", source, {"Ce véhicule n'est pas enregistrer dans votre garage."})
+		end
+	end)
+end)
+
+
+
+
+local clesList = {}
+RegisterServerEvent('GTA_Garage:RequestCles')
+AddEventHandler('GTA_Garage:RequestCles', function()
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	if clesList[player] == nil then
+		clesList[player] = {}
+		MySQL.Async.fetchAll('SELECT plate FROM cles_vehicule WHERE license = @player', {['@player'] = player}, function(res)
+			if (res ~= nil) then
+				for _,v in pairs(res) do
+					clesList[player][#clesList[player] + 1] = {plate = v.plate}
+				end
+				TriggerClientEvent("GTA:UpdateClesVehicule", source, clesList[player])
+			end
+		end)
+	else
+		TriggerClientEvent("GTA:UpdateClesVehicule", source, clesList[player])
+	end
+end)
+
+
+RegisterServerEvent('GTA_Garage:SupprimerCles')
+AddEventHandler('GTA_Garage:SupprimerCles', function(plate)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+    MySQL.Sync.execute("DELETE FROM `cles_vehicule` WHERE license = @player AND plate = @plate", { 
+        ['@player'] = player,
+        ['@plate'] = plate
+    })
+
+	for k,v in pairs(clesList[player]) do
+        if v.plate == plate then
+            clesList[player][k] = nil
+        end
+    end
+	TriggerClientEvent("GTA:UpdateClesVehicule", source, clesList[player])
+end)
+
+RegisterServerEvent('GTA_Garage:DonnerCles')
+AddEventHandler('GTA_Garage:DonnerCles', function(target, plate)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	local playerTarget = GetPlayerIdentifiers(target)[1]
+
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+
+	TriggerClientEvent("NUI-Notification", source, {"Vous avez donner votre clé immatricule : "..plate})
+	TriggerClientEvent("NUI-Notification", target, {"Vous avez reçu une clé immatricule : "..plate})
+
+    MySQL.Sync.execute("UPDATE `cles_vehicule` SET `license`=@recieverid WHERE license = @identifier AND plate = @plate", { 
+        ['@recieverid'] = playerTarget,
+        ['@identifier'] = player,
+        ['@plate'] = plate
+    })
+
+	for k,v in pairs(clesList[player]) do
+        if v.plate == plate then
+            clesList[player][k] = nil
+            clesList[playerTarget][#clesList[playerTarget] + 1] = {plate = v.plate}
+        end
+    end
+
+	TriggerClientEvent("GTA:UpdateClesVehicule", source, clesList[player])
+	TriggerClientEvent("GTA:UpdateClesVehicule", target, clesList[playerTarget])
+end)
+
+
+RegisterServerEvent('GTA_Garage:CopierCles')
+AddEventHandler('GTA_Garage:CopierCles', function(target, plate)
+	local source = source
+	local playerTarget = GetPlayerIdentifiers(target)[1]
+
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+	TriggerClientEvent("NUI-Notification", source, {"Vous avez donner un double de vos clé immatricule : "..plate})
+	TriggerClientEvent("NUI-Notification", target, {"Vous avez reçu un double de clé immatricule : "..plate})
+    MySQL.Sync.execute("INSERT INTO `cles_vehicule`(`license`, `plate`) VALUES (@recieverid,@plate)", { 
+        ['@recieverid'] = playerTarget,
+        ['@plate'] = plate
+    })
+
+	for _,v in pairs(clesList[player]) do
+        if v.plate == plate then
+            clesList[playerTarget][#clesList[playerTarget] + 1] = {plate = v.plate}
+        end
+    end
+	
+	TriggerClientEvent("GTA:UpdateClesVehicule", target, clesList[playerTarget])
+end)
+
+
+RegisterServerEvent('GTA_Garage:RequestPlayerCles')
+AddEventHandler('GTA_Garage:RequestPlayerCles', function(VehId, plate)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	local newPlate = nil
+	if clesList[player] == nil then
+		return
+	else
+		for k,v in pairs(clesList[player]) do 
+			if (v.plate == plate) then 
+				newPlate = v.plate
+				break
+			end
+		end
+
+		if (newPlate ~= nil) then
+			TriggerClientEvent("GTA_Garage:IsPlayerHaveCles", source, VehId, true)
+		else
+			TriggerClientEvent("GTA_Garage:IsPlayerHaveCles", source, VehId, false)
+		end
+	end
+end)
+
+RegisterServerEvent('GTA_Garage:RequestPlayerClesOutside')
+AddEventHandler('GTA_Garage:RequestPlayerClesOutside', function(VehId, plate)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	local newPlate = nil
+	if clesList[player] == nil then
+		return
+	else
+		for k,v in pairs(clesList[player]) do 
+			if (v.plate == plate) then 
+				newPlate = v.plate
+				break
+			end
+		end
+
+		if (newPlate ~= nil) then
+			TriggerClientEvent("GTA_Garage:IsPlayerHaveClesOutside", source, VehId, true)
+		else
+			TriggerClientEvent("GTA_Garage:IsPlayerHaveClesOutside", source, VehId, false)
+		end
+	end
+end)
+
+
+RegisterServerEvent('garages:CreerNouvelCles')
+AddEventHandler('garages:CreerNouvelCles', function(name, plate)
+	local source = source
+	local player = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll("SELECT * FROM gta_joueurs_vehicle WHERE vehicle_plate = @vehicle_plate AND vehicle_name = @vehicle_name",{['@vehicle_plate'] = plate, ['@vehicle_name'] = name}, function(result)
+		if (result[1].proprietaire ~= "Volé") then
+			MySQL.Sync.execute("INSERT INTO `cles_vehicule`(`license`, `plate`) VALUES (@identifier,@plate)", { 
+				['@identifier'] = player,
+				['@plate'] = plate
+			})
+			clesList[player][#clesList[player] + 1] = {plate = v.plate}
+			TriggerClientEvent("NUI-Notification", source, {"Un nouveau double de clé à bien étais créer avec l'immatricule : "..plate})
+		else
+			TriggerClientEvent("NUI-Notification", source, {"Vous ne pouvez pas faire de double de clé avec un véhicule volé."})
+		end
+	end)
 end)

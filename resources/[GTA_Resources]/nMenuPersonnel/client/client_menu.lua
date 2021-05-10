@@ -7,6 +7,7 @@ local subOptions =  RageUI.CreateSubMenu(mainMenu, "Option menu", "options.")
 local isMouseEnable, hautMis, basMis, chaussureMis, ChapeauMis, isFoodHudEnable = true, true, true, true, false, true
 local isEssenceHudActiver = true
 local pInv = {}
+local pVehListCles = {}
 local pWeight = 0
 local item = {
     item = "",
@@ -29,16 +30,33 @@ AddEventHandler("GTA:UpdateInventaire", function(inv, weight)
     end
 end)
 
+
+RegisterNetEvent('GTA:UpdateClesVehicule')
+AddEventHandler('GTA:UpdateClesVehicule', function(tCles)
+    for k in pairs(pVehListCles) do
+		pVehListCles[k] = nil
+	end
+
+    for _,v in pairs(tCles) do
+        table.insert(pVehListCles, {
+            label     = '~g~Clés immatricule ~w~- ~b~'.. v.plate,
+            plate     = v.plate
+        })
+    end
+end)
+
 Citizen.CreateThread(function()
     while (true) do
         Citizen.Wait(1.0)
         RageUI.IsVisible(mainMenu, function()
             RageUI.Button('Inventaire', "", {}, true, {
                 onSelected = function()
+                TriggerServerEvent("GTA_Garage:RequestCles")
                 playerInventaire = exports.nCoreGTA:GetPlayerInv()
                 pInv = playerInventaire.inventaire
                 pWeight = playerInventaire.weight or 0
                 --TriggerEvent("GTA:LoadWeaponPlayer")
+                Wait(50)
             end}, subInventaire)
 
             RageUI.Button('Mon Portefeuille', "", {}, true, {}, subPapiers);
@@ -74,13 +92,53 @@ Citizen.CreateThread(function()
 
             TriggerEvent("ShowMarkerTarget")
 
+            if (pVehListCles ~= nil) then
+                for _,valeur in pairs(pVehListCles) do
+                    if (valeur.plate ~= nil) then 
+                        RageUI.List(valeur.label, {
+                            { Name = "~b~Donner"},
+                            { Name = "~h~Donner un double"},
+                            { Name = "~r~Jeter"},
+                        }, valeur.index or 1, "", {}, true, {
+                            onListChange = function(Index, Item)
+                                valeur.index = Index;
+                            end,
+                            onSelected = function(Index, Item)
+                            if (Index == 1) then --> Give
+                                local target = GetPlayerServerId(GetClosestPlayer())
+                                if target ~= 0 then
+                                   TriggerServerEvent("GTA_Garage:DonnerCles", target, valeur.plate)
+                                else
+                                    TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
+                                end
+                                RageUI.CloseAll()
+                            elseif (Index == 2) then  --> Give double
+                                local target = GetPlayerServerId(GetClosestPlayer())
+                                if target ~= 0 then
+                                   TriggerServerEvent("GTA_Garage:CopierCles", target, valeur.plate)
+                                else
+                                    TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
+                                end
+                                RageUI.CloseAll()
+                            elseif (Index == 3) then --> Jeter
+                                TriggerServerEvent("GTA_Garage:SupprimerCles", valeur.plate)
+	                            TriggerEvent("NUI-Notification", {"Vous avez jeter votre clé immatricule : " ..valeur.plate})
+                                RageUI.CloseAll()
+                            end
+                        end,
+                    })
+                    end
+                end
+            end
+            
+
             for _,v in pairs(pInv) do
                 if v.count > 0 then 
                     RageUI.List(v.label .. " ".. v.count, {
                             { Name = "Utiliser"},
-                            { Name = "~h~~b~Donner"},
-                            { Name = "~h~~g~Renomer"},
-                            { Name = "~h~~r~Jeter"},
+                            { Name = "~b~Donner"},
+                            { Name = "~h~Renomer"},
+                            { Name = "~r~Jeter"},
                         }, v.index or 1, "", {}, true, {
                             onListChange = function(Index, Item)
                                 v.index = Index;

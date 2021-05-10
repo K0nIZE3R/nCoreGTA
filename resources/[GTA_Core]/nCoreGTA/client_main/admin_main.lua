@@ -137,6 +137,24 @@ RegisterCommand("pos", function(source, args, rawCommand)
         end
     end
 end, false)
+
+
+local function DrawMissionText(m_text, showtime)
+    ClearPrints()
+    SetTextScale(0.5, 0.5)
+    SetTextFont(0)
+    SetTextProportional(1)
+    SetTextColour(255, 255, 255, 255)
+    SetTextDropshadow(0, 0, 0, 0, 255)
+    SetTextEdge(2, 0, 0, 0, 150)
+    SetTextDropShadow()
+    SetTextOutline()
+    SetTextEntry("STRING")
+    SetTextCentre(1)
+    AddTextComponentString(m_text)
+    DrawText(0.5, 0.9)
+end
+
 -----> AFFICHER POSITION X,Y,Z :
 local waitEnablePostition = 1000
 Citizen.CreateThread(function () 

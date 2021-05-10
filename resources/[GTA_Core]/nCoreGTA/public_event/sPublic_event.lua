@@ -121,9 +121,25 @@ AddEventHandler('GTA:GetArgentBanque', function(source, callback)
 	callback(PlayersSource[source].banque)
 end)
 
+--[=====[
+    	cette event sert uniquement a get l'identiter de votre player server-side :
+]=====]
+RegisterServerEvent('GTA:GetIdentityPlayer')
+AddEventHandler('GTA:GetIdentityPlayer', function(source, callback)
+	local t = { 
+		["nom"] = PlayersSource[source].identiter.nom,
+		["prenom"] = PlayersSource[source].identiter.prenom,
+		["age"] = PlayersSource[source].identiter.age,
+		["origine"] = PlayersSource[source].identiter.origine,
+		["profession"] = PlayersSource[source].job,
+		["telephone"] = PlayersSource[source].phone_number,
+	}
+	callback(t)
+end)
+
 
 --[=====[
-    	cette event sert uniquement a faire des paiement avec votre argent propre :
+    	cette event sert uniquement a faire des paiement avec votre argent propre a utilisé [client-side]:
 ]=====]
 RegisterServerEvent('GTA:PaiementCash')
 AddEventHandler('GTA:PaiementCash', function(item, itemid, count)
