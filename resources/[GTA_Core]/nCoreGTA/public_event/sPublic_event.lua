@@ -18,7 +18,6 @@ AddEventHandler('GTA:GetUserSex', function(license, callback)
 	end)
 end)
 
-
 --[=====[
     	Cette event est utilisé pour donné un salaire au joueur toute les 15 minute : 
 ]=====]
@@ -101,7 +100,7 @@ AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
 		["age"] = PlayersSource[source].identiter.age,
 		["origine"] = PlayersSource[source].identiter.origine,
 		["profession"] = PlayersSource[source].job,
-		["telephone"] = PlayersSource[source].phone_number,
+		["telephone"] = PlayersSource[source].phone_number
 	}
 
 	if (target ~= nil) then
@@ -114,12 +113,58 @@ end)
 
 
 --[=====[
+    	Cette event vous retourne les informations de votre player ou target utile pour afficher les info de la carte d'identité :
+]=====]
+RegisterNetEvent("GTA:GetPlayerInformationsIdentiterTarget")
+AddEventHandler("GTA:GetPlayerInformationsIdentiterTarget", function(target)
+	local source = source
+	local license = GetPlayerIdentifiers(source)[1]
+
+	local t = { 
+		["nom"] = PlayersSource[source].identiter.nom,
+		["prenom"] = PlayersSource[source].identiter.prenom,
+		["age"] = PlayersSource[source].identiter.age,
+		["origine"] = PlayersSource[source].identiter.origine,
+		["profession"] = PlayersSource[source].job,
+		["telephone"] = PlayersSource[source].phone_number,
+	}
+
+	if (target ~= nil) then
+		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
+	end
+	
+	getSourceFromIdentifier(license, function(osou)
+		if tonumber(osou) ~= nil then 
+			TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", target, t, tonumber(osou))
+		end
+	end)
+end)
+
+
+function getSourceFromIdentifier(identifier, cb) --> Converted.
+	TriggerEvent('GTA:GetJoueurs', function(joueurs)
+		for k, v in pairs(joueurs) do
+			print(joueurs[k])
+			if(joueurs[k] ~= nil and joueurs[k] == identifier) or (joueurs[k] == identifier) then
+				cb(k)
+				return
+			end
+		end
+	end)
+	cb(nil)
+end
+
+
+--[=====[
     	cette event sert uniquement a get l'argent de banque utile pour faire des condition avant vos achat ou autre.
 ]=====]
 RegisterServerEvent('GTA:GetArgentBanque')
 AddEventHandler('GTA:GetArgentBanque', function(source, callback)
 	callback(PlayersSource[source].banque)
 end)
+
+
 
 --[=====[
     	cette event sert uniquement a get l'identiter de votre player server-side :
@@ -157,6 +202,7 @@ AddEventHandler('GTA:PaiementCash', function(item, itemid, count)
         end
     end
 end)
+
 
 --[=====[
     	cette event sert uniquement a update votre job :

@@ -39,7 +39,6 @@ AddEventHandler("GTA:RemoveItem", function(item, itemid, count)
 end)
 
 
-
 --[=====[
     Permet de get la qty d'item que vous avez sur vous :
 ]=====]
@@ -196,7 +195,3 @@ function SetItemArg(source, itemId, arg)
 
     TriggerClientEvent("GTA:Refreshinventaire", source, PlayersSource[source].inventaire, GetInvWeight(PlayersSource[source].inventaire))
 end
-
-
-
-

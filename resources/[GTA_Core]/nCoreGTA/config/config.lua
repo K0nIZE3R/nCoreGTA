@@ -1,6 +1,5 @@
 --@Super.Cool.Ninja
 config = {}
-
 config.Player = {}
 
 config.versionCore = "Version 1.7"
@@ -51,6 +50,10 @@ config.itemDepart = { --> Item reçu a votre arrivé :
     {
         ["item_name"] = "dirty",
         ["item_qty"] = config.argentSale,
+    },
+    {
+        ["item_name"] = "phone",
+        ["item_qty"] = 1,
     }
 }
 

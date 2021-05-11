@@ -23,11 +23,6 @@ AddEventHandler("GTA_Concess:PayerVehicule", function(prix, index, id, headingVe
                 TriggerClientEvent("GTA_Concess:PaiementEffectuer", source, headingVeh, model, plate, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, "cash", itemid, prix)
                 local value = {identifier, newVehicleNom, model, plate, "Sortit", primarycolor, secondarycolor, pearlescentcolor, wheelcolor, proprietaire, prix}
                 MySQL.Sync.execute('INSERT INTO gta_joueurs_vehicle (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `proprietaire`, `prix`) VALUES ?', { { value } })
-                MySQL.Sync.execute("INSERT INTO `cles_vehicule`(`license`, `plate`) VALUES (@license,@plate)", { 
-                    ['@license'] = identifier,
-                    ['@plate'] = plate
-                })
-                TriggerClientEvent("NUI-Notification", source, {"Vous avez reçu les clés du véhicule immatricule : " ..plate})
             else
 				TriggerClientEvent("GTAO:NotificationIcon", source, "CHAR_BANK_MAZE", "Maze Bank", "Pas assez de fond.", "Paiement refuser")
             end

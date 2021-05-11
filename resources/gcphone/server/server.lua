@@ -78,8 +78,10 @@ end)
 --====================================================================================
 function getSourceFromIdentifier(identifier, cb) --> Converted.
     TriggerEvent('GTA:GetJoueurs', function(joueurs)
-        for k in pairs(joueurs) do
+        for k, v in pairs(joueurs) do
+            print(joueurs[k])
             if(joueurs[k] ~= nil and joueurs[k] == identifier) or (joueurs[k] == identifier) then
+                print(joueurs[k])
                 cb(k)
                 return
             end

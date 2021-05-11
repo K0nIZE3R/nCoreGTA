@@ -17,11 +17,25 @@ DROP DATABASE IF EXISTS `gta_serveur`;
 CREATE DATABASE IF NOT EXISTS `gta_serveur` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */;
 USE `gta_serveur`;
 
+-- Listage de la structure de la table gta_serveur. cles_vehicule
+DROP TABLE IF EXISTS `cles_vehicule`;
+CREATE TABLE IF NOT EXISTS `cles_vehicule` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `license` varchar(50) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `plate` varchar(12) COLLATE utf8mb4_bin NOT NULL,
+  `count` int(11) DEFAULT 0,
+  `label` varchar(255) COLLATE utf8mb4_bin DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+-- Listage des données de la table gta_serveur.cles_vehicule : ~0 rows (environ)
+/*!40000 ALTER TABLE `cles_vehicule` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cles_vehicule` ENABLE KEYS */;
+
 -- Listage de la structure de la table gta_serveur. gta_joueurs
 DROP TABLE IF EXISTS `gta_joueurs`;
 CREATE TABLE IF NOT EXISTS `gta_joueurs` (
   `license` varchar(50) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
-  `source_id` int(11) DEFAULT NULL,
   `banque` int(11) DEFAULT 0,
   `job` varchar(255) COLLATE utf8mb4_bin DEFAULT 'Chomeur',
   `faim` int(11) DEFAULT 100,
@@ -139,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `gta_medic_stockage` (
 -- Listage des données de la table gta_serveur.gta_medic_stockage : ~0 rows (environ)
 /*!40000 ALTER TABLE `gta_medic_stockage` DISABLE KEYS */;
 INSERT INTO `gta_medic_stockage` (`argent`, `argent_sale`) VALUES
-	(500, 0);
+	(0, 0);
 /*!40000 ALTER TABLE `gta_medic_stockage` ENABLE KEYS */;
 
 -- Listage de la structure de la table gta_serveur. gta_metiers
@@ -155,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `gta_metiers` (
 INSERT INTO `gta_metiers` (`metiers`, `salaire`, `emploi`) VALUES
 	('Chomeur', 150, 'public'),
 	('LSPD', 500, 'priver'),
-	('Medic', 500, 'priver');
+	('Medic', 500, 'public');
 /*!40000 ALTER TABLE `gta_metiers` ENABLE KEYS */;
 
 -- Listage de la structure de la table gta_serveur. phone_app_chat

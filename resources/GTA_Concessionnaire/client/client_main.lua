@@ -27,6 +27,8 @@ AddEventHandler("GTA_Concess:PaiementEffectuer", function(headingVeh, model, pla
     TaskWarpPedIntoVehicle(playerPed, personnalVeh, -1)
 
     TriggerServerEvent("GTA:PaiementCash", itemname, itemid, prix)
+    TriggerServerEvent("garages:CreerNouvelCles", platecaissei)
+    TriggerServerEvent("GTA_Garage:RequestNewCles") --> Update keys list.
     --TriggerServerEvent("GTA-Coffre:InitPlate", platecaissei)
 end)
 

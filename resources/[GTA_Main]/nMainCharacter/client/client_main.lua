@@ -101,6 +101,8 @@ function AnimCam()
 	--> Ouverture du menu :
 	TriggerEvent("GTA:BeginMenuCreation")
 end
+
+
 --> Gestion des camera :
 function CameraPosition(camera)
 	if config.CamPerso then

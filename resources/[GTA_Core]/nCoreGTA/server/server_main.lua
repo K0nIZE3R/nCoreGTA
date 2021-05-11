@@ -1,3 +1,4 @@
+local PlayerLicense = {}
 Player = {}
 Player.__index = Player
 PlayersSource = {}
@@ -13,8 +14,7 @@ AddEventHandler('playerDropped', function(reason)
             local inventaire = json.encode(p.inventaire)
             local lastPosition = "{" .. p.pos.x .. ", " .. p.pos.y .. ",  " .. p.pos.z.. "}"
             local identity = json.encode(p.identiter)
-            MySQL.Sync.execute("UPDATE `gta_joueurs` SET source_id = @Newsource, inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
-                ["@Newsource"] = p.source_id,
+            MySQL.Sync.execute("UPDATE `gta_joueurs` SET inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
                 ["@inventaire"] = inventaire,
                 ["@newFaim"] = p.faim,
                 ["@newSoif"] = p.soif,
@@ -25,13 +25,13 @@ AddEventHandler('playerDropped', function(reason)
                 ["@service"] = p.enService,
                 ["@grade"] = p.grade,
                 ["@job"] = p.job,
-                ["@Number"] = p.phone_number,
                 ["@FirstConnexion"] = p.isFirstConnexion,
                 ["@license"] = license,
             })
         end
         print("^2ID : ^7"..license.." joueur synchroniser.")
 		PlayersSource[source] = nil
+        PlayerLicense[source] = nil
 	end
 end)
 
@@ -46,8 +46,7 @@ AddEventHandler("GTA:SyncPlayer", function()
         local inventaire = json.encode(p.inventaire)
         local lastPosition = "{" .. p.pos.x .. ", " .. p.pos.y .. ",  " .. p.pos.z.. "}"
         local identity = json.encode(p.identiter)
-        MySQL.Sync.execute("UPDATE `gta_joueurs` SET source_id = @Newsource, inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, phone_number = @Number, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
-            ["@Newsource"] = p.source_id,
+        MySQL.Sync.execute("UPDATE `gta_joueurs` SET inventaire = @inventaire, faim = @newFaim, soif = @newSoif, identiter = @identity, banque = @banque, lastpos = @lastpos, isAdmin = @isAdmin, enService = @service, grade = @grade, job = @job, isFirstConnexion = @FirstConnexion WHERE gta_joueurs.license = @license", {
             ["@inventaire"] = inventaire,
             ["@newFaim"] = p.faim,
             ["@newSoif"] = p.soif,
@@ -58,7 +57,6 @@ AddEventHandler("GTA:SyncPlayer", function()
             ["@service"] = p.enService,
             ["@grade"] = p.grade,
             ["@job"] = p.job,
-            ["@Number"] = p.phone_number,
             ["@FirstConnexion"] = p.isFirstConnexion,
             ["@license"] = license,
         })
@@ -87,20 +85,22 @@ AddEventHandler('GTA:CreationJoueur', function()
 	local source = source
     local license = GetPlayerIdentifiers(source)[1]
     local randomPhoneNumber = getPhoneRandomNumber() 
+    local getActualNumber = randomPhoneNumber
 
 
 	local result = MySQL.Sync.fetchAll("SELECT * FROM gta_joueurs WHERE license = @identifier", {
         ['@identifier'] = license
     })
 
+    PlayerLicense[source] = license
 	PlayersSource[source] = {}
 
 	--> Create Data player : 
 	if result[1] == nil then
-    	MySQL.Async.execute('INSERT INTO gta_joueurs (`license`, `banque`, `inventaire`, `identiter`) VALUES (@license, @banque, @inventaire, @identiter)',{ ['@license'] = license, ['@banque'] = config.banque, ['@inventaire'] = "[]", ['@identiter'] = "[]"})
-        PlayersSource[source].source_id = source
+    	MySQL.Async.execute('INSERT INTO gta_joueurs (`license`, `isAdmin`, `banque`, `inventaire`, `identiter`, `phone_number`) VALUES (@license, @admin, @banque, @inventaire, @identiter, @phone_number)',{ ['@license'] = license, ['@admin'] = 1, ['@banque'] = config.banque, ['@inventaire'] = "[]", ['@identiter'] = "[]", ['@phone_number'] = randomPhoneNumber})
         PlayersSource[source].inventaire = {}
         PlayersSource[source].identiter = {}
+        PlayersSource[source].phone_number = getActualNumber
 		PlayersSource[source].faim = 100
         PlayersSource[source].soif = 100
         PlayersSource[source].banque = config.banque 
@@ -110,7 +110,7 @@ AddEventHandler('GTA:CreationJoueur', function()
         PlayersSource[source].enService = 0
         PlayersSource[source].isAdmin = 1
         PlayersSource[source].isFirstConnexion = 0
-        PlayersSource[source].phone_number = randomPhoneNumber
+
 
 		MySQL.Async.execute('INSERT INTO gta_joueurs_humain (`license`) VALUES (@license)',{ ['@license'] = license})
 		MySQL.Async.execute('INSERT INTO gta_joueurs_vetement (`license`) VALUES (@license)',{ ['@license'] = license})
@@ -119,7 +119,6 @@ AddEventHandler('GTA:CreationJoueur', function()
 		local inv = json.decode(result[1].inventaire)
 		local pos = json.decode(result[1].lastpos)
         local identiter = json.decode(result[1].identiter)
-        PlayersSource[source].source_id = source
         PlayersSource[source].inventaire = inv
         PlayersSource[source].identiter = identiter
         PlayersSource[source].faim = result[1].faim
@@ -191,5 +190,5 @@ end)
 
 
 AddEventHandler('GTA:GetJoueurs', function(cb)
-    cb(PlayersSource)
+    cb(PlayerLicense)
 end)

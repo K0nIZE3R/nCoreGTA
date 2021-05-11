@@ -7,7 +7,6 @@ local subOptions =  RageUI.CreateSubMenu(mainMenu, "Option menu", "options.")
 local isMouseEnable, hautMis, basMis, chaussureMis, ChapeauMis, isFoodHudEnable = true, true, true, true, false, true
 local isEssenceHudActiver = true
 local pInv = {}
-local pVehListCles = {}
 local pWeight = 0
 local item = {
     item = "",
@@ -30,18 +29,24 @@ AddEventHandler("GTA:UpdateInventaire", function(inv, weight)
     end
 end)
 
+local pVehListCles = {}
+RegisterNetEvent("GTA:UpdateClesVehicule")
+AddEventHandler("GTA:UpdateClesVehicule", function(tCles)
+    pVehListCles = {}
 
-RegisterNetEvent('GTA:UpdateClesVehicule')
-AddEventHandler('GTA:UpdateClesVehicule', function(tCles)
     for k in pairs(pVehListCles) do
 		pVehListCles[k] = nil
 	end
 
-    for _,v in pairs(tCles) do
-        table.insert(pVehListCles, {
-            label     = '~g~Clés immatricule ~w~- ~b~'.. v.plate,
-            plate     = v.plate
-        })
+    if (tCles ~= nil) then
+        for _,v in pairs(tCles) do
+            if (v ~= nil) then
+                table.insert(pVehListCles, {
+                    label = '~g~Clés immatricule ~w~- ~b~'.. v.label,
+                    plate = v.plate
+                })
+            end
+        end
     end
 end)
 
@@ -51,7 +56,6 @@ Citizen.CreateThread(function()
         RageUI.IsVisible(mainMenu, function()
             RageUI.Button('Inventaire', "", {}, true, {
                 onSelected = function()
-                TriggerServerEvent("GTA_Garage:RequestCles")
                 playerInventaire = exports.nCoreGTA:GetPlayerInv()
                 pInv = playerInventaire.inventaire
                 pWeight = playerInventaire.weight or 0
@@ -92,12 +96,13 @@ Citizen.CreateThread(function()
 
             TriggerEvent("ShowMarkerTarget")
 
-            if (pVehListCles ~= nil) then
+           
                 for _,valeur in pairs(pVehListCles) do
                     if (valeur.plate ~= nil) then 
                         RageUI.List(valeur.label, {
                             { Name = "~b~Donner"},
                             { Name = "~h~Donner un double"},
+                            { Name = "~h~Renommer"},
                             { Name = "~r~Jeter"},
                         }, valeur.index or 1, "", {}, true, {
                             onListChange = function(Index, Item)
@@ -108,6 +113,8 @@ Citizen.CreateThread(function()
                                 local target = GetPlayerServerId(GetClosestPlayer())
                                 if target ~= 0 then
                                    TriggerServerEvent("GTA_Garage:DonnerCles", target, valeur.plate)
+                                   TriggerServerEvent("GTA_Garage:RequestNewCles")
+                                   TriggerServerEvent("GTA_Garage:RequestNewCles", target)
                                 else
                                     TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                                 end
@@ -116,11 +123,18 @@ Citizen.CreateThread(function()
                                 local target = GetPlayerServerId(GetClosestPlayer())
                                 if target ~= 0 then
                                    TriggerServerEvent("GTA_Garage:CopierCles", target, valeur.plate)
+                                   TriggerServerEvent("GTA_Garage:RequestNewCles")
+                                   TriggerServerEvent("GTA_Garage:RequestNewCles", target)
                                 else
                                     TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                                 end
                                 RageUI.CloseAll()
-                            elseif (Index == 3) then --> Jeter
+                            elseif (Index == 3) then --> Renommer
+                                local newLabel = GetInputText("Veuillez saisir un nouveau nom pour votre clé :")
+                                TriggerServerEvent("GTA_Garage:RenomerCles", valeur.plate, newLabel)
+	                            TriggerEvent("NUI-Notification", {"Vous avez renommer votre clé."})
+                                RageUI.CloseAll()
+                            elseif (Index == 4) then --> Jeter
                                 TriggerServerEvent("GTA_Garage:SupprimerCles", valeur.plate)
 	                            TriggerEvent("NUI-Notification", {"Vous avez jeter votre clé immatricule : " ..valeur.plate})
                                 RageUI.CloseAll()
@@ -129,7 +143,7 @@ Citizen.CreateThread(function()
                     })
                     end
                 end
-            end
+            
             
 
             for _,v in pairs(pInv) do
@@ -207,7 +221,7 @@ Citizen.CreateThread(function()
                 onSelected = function()
                     local target = GetPlayerServerId(GetClosestPlayer())
                     if target ~= 0 then
-                        TriggerServerEvent("GTA:GetPlayerInformationsIdentiter", target)
+                        TriggerServerEvent("GTA:GetPlayerInformationsIdentiterTarget", target)
                     else
                         TriggerEvent("NUI-Notification", {"Aucune personne devant vous !", "warning"})
                     end
@@ -296,6 +310,7 @@ Citizen.CreateThread(function()
         
         if IsControlJustReleased(0, 244) then
             TriggerServerEvent("GTA:GetPlayerSexServer")
+            TriggerServerEvent("GTA_Garage:RefreshTableCles")
             RageUI.Visible(mainMenu, not RageUI.Visible(mainMenu))
         end
 

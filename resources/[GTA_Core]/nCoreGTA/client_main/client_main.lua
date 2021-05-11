@@ -1,46 +1,24 @@
 --@Super.Cool.Ninja
 local departItemList = {}
-local camSpawn = nil
 local cam = nil
-local cam2 = nil
-
-local function GetDepartItemList()
-    for i=1, #config.itemDepart, 1 do
-        table.insert(departItemList, {name = config.itemDepart[i]["item_name"], qty = config.itemDepart[i]["item_qty"]})
-    end
-end
-
-local function DrawMissionText(m_text, showtime)
-    ClearPrints()
-	SetTextScale(0.5, 0.5)
-	SetTextFont(0)
-	SetTextProportional(1)
-	SetTextColour(255, 255, 255, 255)
-	SetTextDropshadow(0, 0, 0, 0, 255)
-	SetTextEdge(2, 0, 0, 0, 150)
-	SetTextDropShadow()
-	SetTextOutline()
-	SetTextEntry("STRING")
-	SetTextCentre(1)
-	AddTextComponentString(m_text)
-	DrawText(0.5, 0.9)
-end
 
 --> Création/Load du player :
 Citizen.CreateThread(function()
     TriggerServerEvent("GTA:CreationJoueur")
 end)
 
+
 --[=====[
         Synchro toute les 5 minute des donnée du player sauvegarder dans la table PlayerSource :
 ]=====]
 Citizen.CreateThread(function()
     while true do
+        Citizen.Wait(config.timerPlayerSynchronisation)
         TriggerServerEvent("GTA:SyncPlayer")
 		TriggerEvent("NUI-Notification", {"Synchronisation éfféctué."})
-        Wait(config.timerPlayerSynchronisation)
     end
 end)
+
 
 --> On refresh les donnée de notre player  :
 RegisterNetEvent("GTA:LoadPlayerData")
@@ -53,13 +31,22 @@ AddEventHandler("GTA:LoadPlayerData", function(playersInfo, itemsList)
 end)
 
 
+
+local function GetDepartItemList()
+    for i=1, #config.itemDepart, 1 do
+        table.insert(departItemList, {name = config.itemDepart[i]["item_name"], qty = config.itemDepart[i]["item_qty"]})
+    end
+end
+--[=====[
+       C'est avec cette event que l'on charge le player au moment du spawn :
+]=====]
 RegisterNetEvent("GTA:SpawnPlayer")
 AddEventHandler("GTA:SpawnPlayer", function()
-    Wait(1500)
+    Wait(5000)
     
-    if  (GetIsFirstConnexion() == false) then
-        SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
+    if (GetIsFirstConnexion() == false) then
         NetworkResurrectLocalPlayer(config.Player.pos + 0.0, 0, true, true, false)
+        SetEntityCoords(GetPlayerPed(-1), config.Player.pos + 0.0, 1, 0, 0, 1)
 
         DisplayRadar(true)
         DisplayHud(true)
@@ -82,6 +69,22 @@ AddEventHandler("GTA:SpawnPlayer", function()
 end)
 
 
+
+function DrawMissionText(m_text, showtime)
+    ClearPrints()
+	SetTextScale(0.5, 0.5)
+	SetTextFont(0)
+	SetTextProportional(1)
+	SetTextColour(255, 255, 255, 255)
+	SetTextDropshadow(0, 0, 0, 0, 255)
+	SetTextEdge(2, 0, 0, 0, 150)
+	SetTextDropShadow()
+	SetTextOutline()
+	SetTextEntry("STRING")
+	SetTextCentre(1)
+	AddTextComponentString(m_text)
+	DrawText(0.5, 0.9)
+end
 Citizen.CreateThread(function()
 	while true do
         Citizen.Wait(0)
@@ -102,13 +105,13 @@ Citizen.CreateThread(function()
         if IsControlJustPressed(0, 18) then
             TriggerEvent("GTA:SpawnPlayer")
             PlaySoundFrontend(-1, "CAR_BIKE_WHOOSH", "MP_LOBBY_SOUNDS", 1)
-            break
+            return
         end
 	end
 end)
 
 
- --> Main Thread :
+--> Main Thread :
 Citizen.CreateThread(function()
     --> PVP :
     if config.activerPvp == true then
@@ -136,6 +139,7 @@ Citizen.CreateThread(function()
             while true do
                 Citizen.Wait(0)
                 local myPlayer = GetEntityCoords(PlayerPedId())	
+                
                 --> Permet de ne pas recevoir d'indice de recherche :
                 if (GetPlayerWantedLevel(PlayerId()) > 0) then
                     SetPlayerWantedLevel(PlayerId(), 0, false)

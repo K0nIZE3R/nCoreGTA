@@ -5,7 +5,7 @@ local Duree = 0
 Citizen.CreateThread(function()
     while (true) do
         RageUI.IsVisible(mainMenu, function()
-            RageUI.Button('Ranger un véhicule dans votre garage', "", {}, true, {onSelected = function() TriggerServerEvent('garages:CheckForVeh', immatri, Config.getEmplacement, GetInfoGarage()) RageUI.CloseAll(true)end})
+            RageUI.Button('Ranger un véhicule dans votre garage', "", {}, true, {onSelected = function() TriggerServerEvent('garages:CheckForVeh', immatri) RageUI.CloseAll(true)end})
             RageUI.Button('Liste de vos véhicules', "", {}, true, {}, subVehiculeListSortir);
         end, function()end)
         RageUI.IsVisible(subVehiculeListSortir, function()
@@ -26,7 +26,7 @@ Citizen.CreateThread(function()
                             TriggerServerEvent('garages:RenameVeh', v.name, v.plaque)
                             RageUI.CloseAll(true)
                         elseif Index == 3 then 
-                            TriggerServerEvent('garages:CreerNouvelCles', v.name, v.plaque)
+                            TriggerServerEvent('garages:CreerNouvelCles', v.plaque)
                             RageUI.CloseAll(true)
                         end
                     end,
@@ -104,7 +104,7 @@ Citizen.CreateThread(function()
                     if IsPedInAnyVehicle(GetPlayerPed(-1)) then
                         TriggerServerEvent("GTA_Receler:RequestVenteVehicule", immatri, vehicle)
                     else
-                         TriggerEvent("NUI-Notification", {"Veuillez entrer dans un véhicule !", "warning"})
+                        TriggerEvent("NUI-Notification", {"Veuillez entrer dans un véhicule !", "warning"})
                     end
                 end
             elseif dist <= 15 then
@@ -123,11 +123,11 @@ AddEventHandler("GTA_Garage:IsPlayerHaveCles", function(VehId, bHaveKey)
         local lockStatus = GetVehicleDoorLockStatus(VehId)
 
         if lockStatus == 1 then
-            SetVehicleDoorsLocked(VehId, 4)
+            SetVehicleDoorsLocked(VehId, 1)
             PlayVehicleDoorCloseSound(VehId, 1)
             TriggerEvent("NUI-Notification", {"Véhicule vérrouillé"})
-        elseif lockStatus == 4 then
-            SetVehicleDoorsLocked(VehId, 1)
+        elseif lockStatus == 2 then
+            SetVehicleDoorsLocked(VehId, 2)
             PlayVehicleDoorOpenSound(VehId, 0)
             TriggerEvent("NUI-Notification", {"Véhicule dévérrouillé"})
         end
@@ -148,11 +148,11 @@ AddEventHandler("GTA_Garage:IsPlayerHaveClesOutside", function(VehId, bHaveKey)
     if (bHaveKey == true) then
         local lockStatus = GetVehicleDoorLockStatus(VehId)
         if lockStatus == 1 then -- unlocked
-            SetVehicleDoorsLocked(VehId, 4)
+            SetVehicleDoorsLocked(VehId, 2)
             PlayVehicleDoorCloseSound(VehId, 1)
             TaskPlayAnim(GetPlayerPed(-1), dict, "fob_click_fp", 8.0, 8.0, -1, 48, 1, false, false, false)
             TriggerEvent("NUI-Notification", {"Véhicule vérrouillé"})
-        elseif lockStatus == 4 then -- locked
+        elseif lockStatus == 2 then -- locked
             SetVehicleDoorsLocked(VehId, 1)
             PlayVehicleDoorOpenSound(VehId, 0)
             TaskPlayAnim(GetPlayerPed(-1), dict, "fob_click_fp", 8.0, 8.0, -1, 48, 1, false, false, false)
@@ -166,20 +166,25 @@ end)
 Citizen.CreateThread(function()
     while true do
         Wait(0)
-        if(IsControlJustPressed(1, 303)) then -- Key : U
+        if (IsControlJustReleased( 0, 303 )) and GetLastInputMethod( 0 ) then 
             local plr = GetPlayerPed(-1)
             local plrCoords = GetEntityCoords(plr, true)
 
             if(IsPedInAnyVehicle(plr, true))then
-                local localVehId = GetVehiclePedIsIn(GetPlayerPed(-1), false)
+                local localVehId = GetVehiclePedIsIn(plr, false)
                 local localVehPlate = GetVehicleNumberPlateText(localVehId)
-                TriggerServerEvent("GTA_Garage:RequestCles")
                 TriggerServerEvent("GTA_Garage:RequestPlayerCles", localVehId, localVehPlate)
             else
-                local localVehId = GetClosestVehicle(plrCoords, 8.0, 0, 70)
-                local localVehPlate = GetVehicleNumberPlateText(localVehId)
-                TriggerServerEvent("GTA_Garage:RequestCles")
-                TriggerServerEvent("GTA_Garage:RequestPlayerClesOutside", localVehId, localVehPlate)
+                local vehicle = GetClosestVehicle(plrCoords['x'], plrCoords['y'], plrCoords['z'], 5.9, 0, 70) --> Work fine.
+                local localVehPlate = GetVehicleNumberPlateText(vehicle)
+               
+                if DoesEntityExist(vehicle) then
+                    if (localVehPlate ~= nil) then
+                        TriggerServerEvent("GTA_Garage:RequestPlayerClesOutside", vehicle, localVehPlate)
+                    end
+                else
+                    TriggerEvent("NUI-Notification", {"Aucun véhicule trouvé proche de vous.", "warning"})
+                end
             end
             Citizen.Wait(1000)
         end

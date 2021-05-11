@@ -7,9 +7,6 @@ AddEventHandler('playerSpawned', function()
     TriggerServerEvent('GTA:requestSync')
 end)
 
-
-
-
 --[=====[
         Notification :
 ]=====]
@@ -24,7 +21,6 @@ AddEventHandler("NUI-Notification", function(t)
         type = tType
     })
 end)
-
 
 
 
@@ -165,9 +161,6 @@ end)
 
 
 
-
-
-
 --[=====[
             Spawn Vehicule :
 ]=====]
@@ -192,9 +185,6 @@ AddEventHandler("SpawnVehicule", function(pVeh, pos, imatricule)
 end)
 
 
-
-
-
 --[=====[
             Destroy Vehicule :
 ]=====]
@@ -205,8 +195,6 @@ AddEventHandler("DestroyVehicle", function(entity)
 	Citizen.InvokeNative(0xAE3CBE5BF394C9C9, Citizen.PointerValueIntInitialized(entity))
     TriggerEvent("NUI-Notification", {"Véhicule détruit."})
 end)
-
-
 
 
 

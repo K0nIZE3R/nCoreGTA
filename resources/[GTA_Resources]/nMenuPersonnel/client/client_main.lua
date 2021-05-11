@@ -17,7 +17,7 @@ AddEventHandler("GTA_Interaction:UpdateInfoPlayers", function(identiter, banque)
 end)
 
 RegisterNetEvent("GTA_Interaction:UpdateInfoPlayersIdentiter")
-AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter)
+AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter, targetID)
 	config.showIdentiter = true
 
     config.identiter.nom = identiter["nom"] 
@@ -80,7 +80,7 @@ AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter
 		width, height = 0.0905, 0.251
 	end
 
-	if (targetID ~= nil) then
+	if (tonumber(targetID) ~= nil) then
 		local targetPlayer = nil
 		for i = 1, 255, 1 do
 			if NetworkIsPlayerActive(i) then
@@ -97,10 +97,12 @@ AddEventHandler("GTA_Interaction:UpdateInfoPlayersIdentiter", function(identiter
 		end
 		local txd = GetPedheadshotTxdString(handle)
 
-		while config.showIdentiter do
-			Wait (5)
-			DrawSprite (txd, txd, posx, posy, width, height, 0.0, 255, 255, 255, 1000)
-		end
+		Citizen.CreateThread(function()
+			while config.showIdentiter do
+				Citizen.Wait(0)
+				DrawSprite (txd, txd, posx, posy, width, height, 0.0, 255, 255, 255, 1000)
+			end
+		end)
 	
 		if not config.showIdentiter then
 			UnregisterPedheadshot(txd)
@@ -235,9 +237,10 @@ function GetInputNumber()
     return nb
 end
 
-function GetInputText(actualtext)
-    local text = ""
-    DisplayOnscreenKeyboard(1, "FMMC_KEY_TTTIP8", "", actualtext, "", "", "", 120)
+function GetInputText(reason)
+	local text = ""
+	AddTextEntry('nombre', reason)
+    DisplayOnscreenKeyboard(1, "nombre", "", "", "", "", "", 20)
     while (UpdateOnscreenKeyboard() == 0) do
         DisableAllControlActions(0)
         Wait(10)

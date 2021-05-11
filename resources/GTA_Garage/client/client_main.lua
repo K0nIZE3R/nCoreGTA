@@ -95,7 +95,7 @@ AddEventHandler('garages:StoreVehicle', function(plate)
             local wheelcolor = extra_colors[2]
 
             if tostring(string.upper(plate)) == tostring(string.upper(immatricul)) then	
-                SetEntityAsMissionEntity( vehicle, true, true)
+                SetEntityAsMissionEntity(vehicle, true, true)
                 Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(vehicle))
                 
                 TriggerServerEvent('garages:SetVehIn', model, immatricul, primarycolor, secondarycolor, pearlescentcolor, wheelcolor, vehicle, Config.getEmplacement, GetInfoGarage())
@@ -114,12 +114,10 @@ RegisterNetEvent('garages:StoreVehicleStolen')
 AddEventHandler('garages:StoreVehicleStolen', function(plate)
     Citizen.CreateThread(function()
         Citizen.Wait(0)
-
 		local playerPed  = GetPlayerPed(-1)
-        local vehicle = GetVehiclePedIsIn(playerPed, false)    
+        local vehicle = GetVehiclePedIsIn(playerPed, false)
         local immatricul = GetVehicleNumberPlateText(vehicle)
         local model = GetEntityModel(vehicle)
-
 
         if IsPedInAnyVehicle(playerPed) then
             local colors = table.pack(GetVehicleColours(vehicle))
@@ -173,5 +171,6 @@ end
 
 --> Si le joueur déco, on lui remet ses véhicule dans son garage a son spawn :
 AddEventHandler("playerSpawned", function(spawn)
+    TriggerServerEvent("GTA_Garage:RefreshTableCles")
     TriggerServerEvent("garages:PutAllVehInGarages")
 end)
