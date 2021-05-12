@@ -6,7 +6,7 @@ PerformHttpRequest('https://raw.githubusercontent.com/NinjaSourceV2/GTA_Garage/m
         print("\n\r ^2[GTA_Garage]^1 La version que vous utilisé n'est plus a jours, veuillez télécharger la dernière version. ^3\n\r")
     end
 end)
-
+math.randomseed(os.time())
 RegisterServerEvent('garages:PutAllVehInGarages')
 AddEventHandler('garages:PutAllVehInGarages', function()
 	local source = source
@@ -101,7 +101,8 @@ AddEventHandler('garages:NewStolenCar', function(model, immatricul, primarycolor
 	local player = GetPlayerIdentifiers(source)[1]
 	local zone = GetInfoGarage["NomZone"]
 	local maxEmplacement = GetInfoGarage["MaxVeh"]
-	local value = {player, "Vehicule Moldu", model, immatricul, "Rentré", primarycolor, secondarycolor, pearlescentcolor, wheelcolor, zone, "Volé", 0}
+	local randomId = math.random(0,999)
+	local value = {player, "Vehicule Moldu#"..randomId, model, immatricul, "Rentré", primarycolor, secondarycolor, pearlescentcolor, wheelcolor, zone, "Volé", 0}
 	vehicle_plate_list_stolen = {}
 
 	MySQL.Async.fetchAll("SELECT vehicle_plate FROM gta_joueurs_vehicle WHERE identifier = @identifier", {['@identifier'] = player}, function(res)
@@ -133,13 +134,14 @@ AddEventHandler('garages:CheckDuplicationVeh', function(model, immatricul, prima
 	local source = source
 	local player = GetPlayerIdentifiers(source)[1]
 	local dupli = MySQL.Sync.fetchScalar("SELECT vehicle_plate FROM gta_joueurs_vehicle GROUP BY vehicle_plate HAVING COUNT(vehicle_plate) > 1")
+	local randomId = math.random(0,999)
 	
 	if dupli then 
 		TriggerClientEvent("NUI-Notification", source, {"Duplication de véhicule détecter, le véhicule ne peut pas être ranger dans ce garage."})
 	else
 		MySQL.Sync.execute("INSERT INTO gta_joueurs_vehicle  (`identifier`, `vehicle_name`, `vehicle_model`, `vehicle_plate`, `vehicle_state`, `vehicle_colorprimary`, `vehicle_colorsecondary`, `vehicle_pearlescentcolor`, `vehicle_wheelcolor`, `zone_garage`) VALUES(@identifier, @vehicle_name, @vehicle_model, @vehicle_plate, @vehicle_state, @vehicle_colorprimary, @vehicle_colorsecondary, @vehicle_pearlescentcolor, @vehicle_wheelcolor, @zone_garage)", {
 			['@identifier'] = player,
-			['@vehicle_name'] = "Mon vehicule",
+			['@vehicle_name'] = "Mon vehicule#"..randomId,
 			['@vehicle_model'] = model,
 			['@vehicle_plate'] = plate,
 			['@vehicle_state'] = "Rentré",

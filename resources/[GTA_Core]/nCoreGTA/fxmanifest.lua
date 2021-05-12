@@ -6,7 +6,6 @@ server_scripts {
     'config/config.lua',
     'server/server_main.lua',
     'server/whitelist.lua',
-    'server/admin_command.lua',
     'server/server_inventory.lua',
     'synchronisation/server.lua',
     'services/server.lua',

@@ -108,7 +108,7 @@ AddEventHandler('GTA:CreationJoueur', function()
         PlayersSource[source].job = "Chomeur"
         PlayersSource[source].grade = "Aucun"
         PlayersSource[source].enService = 0
-        PlayersSource[source].isAdmin = 1
+        PlayersSource[source].isAdmin = true
         PlayersSource[source].isFirstConnexion = 0
 
 

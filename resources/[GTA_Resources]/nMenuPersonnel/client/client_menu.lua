@@ -178,7 +178,7 @@ Citizen.CreateThread(function()
                                         end
 
                                         if (tonumber(v.count) >= qty) then
-                                            TriggerServerEvent("GTA:GiveItem", target, item.item, item.id, qty)
+                                            TriggerServerEvent("GTA_Inventaire:GiveItem", target, item.item, item.id, qty)
                                         else
                                             TriggerEvent("NUI-Notification", {"Vous n'avez pas assez d'items.", "warning"})
                                         end
@@ -191,12 +191,12 @@ Citizen.CreateThread(function()
                                    
                                 elseif (Index == 3) then --> Renomer
                                         local newNameItem = GetInputText("Entrez le nouveau nom de l'item")
-                                        TriggerServerEvent("GTA:RenameItem", item.item, newNameItem, item.id)
+                                        TriggerServerEvent("GTA_Inventaire:RenameItem", item.item, newNameItem, item.id)
                                         RageUI.CloseAll()
                                 elseif (Index == 4) then  --> Jeter
                                     local count = GetInputNumber()
                                     if count ~= nil and count > 0 and count <= item.count then
-                                        TriggerServerEvent("GTA:RemoveItem", item.item, item.id, count)
+                                        TriggerServerEvent("GTA_Inventaire:RemoveItem", item.item, item.id, count)
                                         TriggerEvent("NUI-Notification", {"Vous avez jeter x" ..count.. " "..item.label})
                                     end
                                 end

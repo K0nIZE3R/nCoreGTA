@@ -13,7 +13,7 @@ AddEventHandler("GTA_Concess:PayerVehicule", function(prix, index, id, headingVe
     local identifier = GetPlayerIdentifiers(source)[1]
 
     TriggerEvent('GTA:GetIdentityPlayer', source, function(data)
-        TriggerEvent('GTA:GetItemQty', source, "cash", function(qtyItem, itemid)
+        TriggerEvent('GTA_Inventaire:GetItemQty', source, "cash", function(qtyItem, itemid)
             local nom = data["nom"]
             local prenom = data["prenom"]
             local proprietaire = (nom .. " " ..prenom) 

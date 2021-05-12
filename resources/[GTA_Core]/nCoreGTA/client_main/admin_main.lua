@@ -1,12 +1,5 @@
 local godmode, isEnablePosition = false, false
 
---> Executer une fois que le joueur se give un item :
-RegisterNetEvent("GTA:GivePlayerItem")
-AddEventHandler("GTA:GivePlayerItem", function(itemID, qty, maxqty)
-    TriggerEvent("player:receiveItem", itemID, qty, maxqty)
-end)
-
-
 --> Commande pour se tp sur un marker :
 --> /tpt 
 RegisterCommand("tpt", function()
@@ -74,7 +67,7 @@ end, false)
 --> /give "item_name" montant
 RegisterCommand("give", function(source, args, rawCommand)
     if (GetIsPlayerAdmin() == true) then
-        TriggerServerEvent("GTA:ReceiveItem", args[1], tonumber(args[2]))
+        TriggerServerEvent("GTA_Inventaire:ReceiveItem", args[1], tonumber(args[2]))
     end
 end, false)
 

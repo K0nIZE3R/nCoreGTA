@@ -9,8 +9,10 @@ end)
 
 --[=====[
         Notification :
+		Cette event peut être utilisé client-side/server-side exemple :
+		Client-side : --> TriggerEvent("NUI-Notification", {"text"})
+		Server-side : --> TriggerClientEvent("NUI-Notification", source, {"text"})
 ]=====]
---TriggerEvent("NUI-Notification", {"text"})
 RegisterNetEvent("NUI-Notification")
 AddEventHandler("NUI-Notification", function(t)
     setmetatable(t,{__index={b = "success"}})
@@ -23,8 +25,12 @@ AddEventHandler("NUI-Notification", function(t)
 end)
 
 
-
---TriggerEvent("nMenuNotif:showNotification", "text")
+--[=====[
+        Notification :
+		Cette event peut être utilisé client-side/server-side exemple :
+		Client-side : --> TriggerEvent("nMenuNotif:showNotification", "text")
+		Server-side : --> TriggerClientEvent("nMenuNotif:showNotification", source, "text")
+]=====]
 RegisterNetEvent('nMenuNotif:showNotification')
 AddEventHandler('nMenuNotif:showNotification', function(text)
     SetNotificationTextEntry( "STRING" )
@@ -33,8 +39,12 @@ AddEventHandler('nMenuNotif:showNotification', function(text)
 end)
 
 
-
---TriggerEvent("GTAO:NotificationIcon", "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
+--[=====[
+        Notification :
+		Cette event peut être utilisé client-side/server-side exemple :
+		Client-side : --> TriggerEvent("GTAO:NotificationIcon", "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
+		Server-side : --> TriggerClientEvent("GTAO:NotificationIcon", source, "CHAR_BANK_MAZE", "Titre","Sous Titre", "TEXT LOREM SISISI ASASAASLLAALLA")
+]=====]
 RegisterNetEvent('GTAO:NotificationIcon')
 AddEventHandler('GTAO:NotificationIcon', function(icon, title, soustitre, text)
 	local soustitre = soustitre or " "
@@ -47,9 +57,10 @@ end)
 
 
 --[=====[
-        Marker Target :
+        Marker Target utile pour afficher un marker au dessus de la tête du target le plus proche :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("ShowMarkerTarget")
 ]=====]
---TriggerEvent("ShowMarkerTarget")
 RegisterNetEvent("ShowMarkerTarget")
 AddEventHandler("ShowMarkerTarget", function()
     afficherMarkerTarget()
@@ -97,9 +108,10 @@ end
 
 
 --[=====[
-            Play TaskStartScenarioInPlace :
+		Play TaskStartScenarioInPlace :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("PlayTaskScenarioInPlace", GetPlayerPed(-1), "WORLD_HUMAN_SMOKING", -1)
 ]=====]
---TriggerEvent("PlayTaskScenarioInPlace", GetPlayerPed(-1), "WORLD_HUMAN_SMOKING", -1)
 RegisterNetEvent("PlayTaskScenarioInPlace")
 AddEventHandler("PlayTaskScenarioInPlace", function(handle, animation, timer) 
 	TaskStartScenarioInPlace(handle, animation, 0, true)
@@ -112,9 +124,10 @@ end)
 
 
 --[=====[
-            Play TaskPlayAnim :
+		Play TaskPlayAnim :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("TaskPlayAnimation", GetPlayerPed(-1), "amb@world_human_golf_player@male@idle_a", "idle_a", -1)
 ]=====]
---TriggerEvent("TaskPlayAnimation", GetPlayerPed(-1), "amb@world_human_golf_player@male@idle_a", "idle_a", -1)
 RegisterNetEvent("TaskPlayAnimation")
 AddEventHandler("TaskPlayAnimation", function(handle, dict, animation, duration, flags) 
 	duration = duration or -1
@@ -130,9 +143,10 @@ end)
 
 
 --[=====[
-           Anim Set Attitude (demarche) :
+		Anim Set Attitude (demarche) :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("BeginRequestAnimSet", "move_m@hipster@a")
 ]=====]
---TriggerEvent("BeginRequestAnimSet", "move_m@hipster@a")
 RegisterNetEvent("BeginRequestAnimSet")
 AddEventHandler("BeginRequestAnimSet", function(animSet) 
 	if not HasAnimSetLoaded(animSet) then
@@ -149,9 +163,10 @@ end)
 
 
 --[=====[
-            Show AlertNear :
+		Show AlertNear :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("AlertNear", "Vous êtes proche d'une zone.")
 ]=====]
---TriggerEvent("AlertNear", "Vous êtes proche d'une zone.")
 RegisterNetEvent("AlertNear")
 AddEventHandler("AlertNear", function(message) 
 	BeginTextCommandDisplayHelp("STRING");  
@@ -162,9 +177,10 @@ end)
 
 
 --[=====[
-            Spawn Vehicule :
+		Spawn Vehicule :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("SpawnVehicule", "luxor", position, "coucou")
 ]=====]
---TriggerEvent("SpawnVehicule", "luxor", position, "coucou")
 RegisterNetEvent("SpawnVehicule")
 AddEventHandler("SpawnVehicule", function(pVeh, pos, imatricule)
     local pVeh = GetHashKey(pVeh)
@@ -186,9 +202,10 @@ end)
 
 
 --[=====[
-            Destroy Vehicule :
+		Destroy Vehicule :
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("DestroyVehicle", entity)
 ]=====]
---TriggerEvent("DestroyVehicle", entity)
 RegisterNetEvent("DestroyVehicle")
 AddEventHandler("DestroyVehicle", function(entity)
     SetEntityAsMissionEntity(entity,true,true)
@@ -199,46 +216,20 @@ end)
 
 
 --[=====[
-            Play Sound List de sons : https://gtaforums.com/topic/795622-audio-for-mods
-			Exemple : TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "Radio_Off", "TAXI_SOUNDS")
+		Play Sound List de sons : https://gtaforums.com/topic/795622-audio-for-mods
+		Cette event est utilisé client-side exemple :
+		--TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "sound", "dict")
+		--TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "Radio_Off", "TAXI_SOUNDS")
 ]=====]
---TriggerEvent("PlaySoundClient", GetPlayerPed(-1), "sound", "dict")
 RegisterNetEvent("PlaySoundClient")
 AddEventHandler("PlaySoundClient", function(handle,sound,dict)
 	PlaySoundFromEntity(-1,tostring(sound),handle,tostring(dict), 0, 0)
 end)
 
 
-
-
-
---[=====[
-        Permet de refresh les nouvel donnée de l'inventaire sans devoir passé par la base de donnée :
-]=====]
-RegisterNetEvent("GTA:Refreshinventaire")
-AddEventHandler("GTA:Refreshinventaire", function(inv, weight)
-	--> On passe ici pour update la table inventaire du "getter_player" : GetPlayerInv.
-    config.Player.inventaire = inv
-    config.Player.weight = weight
-    TriggerEvent("GTA:UpdateInventaire", config.Player.inventaire, config.Player.weight)
-end)
-
-
-
-
-
---[=====[
-        Permet de refresh les nouvel donnée de votre argent en banque utile si vous l'afficher :
-]=====]
-RegisterNetEvent("GTA:AfficherBanque")
-AddEventHandler("GTA:AfficherBanque", function(value)
-	config.Player.banque = value
-end)
-
-
-
 --[=====[
         Permet d'utilisé un item avec différent action possible :
+		les "types" sont définis dans le fichier config de vos items.
 ]=====]
 local items = config.itemList
 RegisterNetEvent("GTA:UseItem")
@@ -262,9 +253,7 @@ AddEventHandler("GTA:UseItem", function(item_name, itemid)
 end)
 
 
---[=====[
-        Permet de refresh les nouvel donnée de votre métier job/grade/service sans devoir passé par la base de donnée :
-]=====]
+--> [Event gérer par le core.]
 RegisterNetEvent("GTA:RefreshJobInformation")
 AddEventHandler("GTA:RefreshJobInformation", function(job, grade, service)
     config.Player.job = job
@@ -272,22 +261,37 @@ AddEventHandler("GTA:RefreshJobInformation", function(job, grade, service)
 	config.Player.enService = service
 end)
 
+--> [Event gérer par le core.]
+RegisterNetEvent("GTA:Refreshinventaire")
+AddEventHandler("GTA:Refreshinventaire", function(inv, weight)
+    config.Player.inventaire = inv
+    config.Player.weight = weight
+    TriggerEvent("GTA:UpdateInventaire", config.Player.inventaire, config.Player.weight)
+end)
+
+--> [Event gérer par le core.]
+RegisterNetEvent("GTA:AfficherBanque")
+AddEventHandler("GTA:AfficherBanque", function(value)
+	config.Player.banque = value
+end)
+
+
 
 --[=====[
-        Permet de retirer un item de votre inventaire :
+        Permet de retirer un item de votre inventaire server-side exemple :
 		Utilisation : TriggerClientEvent("GTA_Inventaire:RetirerItem", item_name, itemid, qty)
 ]=====]
 RegisterNetEvent("GTA_Inventaire:RetirerItem")
 AddEventHandler("GTA_Inventaire:RetirerItem", function(item_name, itemid, qty)
-   TriggerServerEvent("GTA:RemoveItem", item_name, itemid, qty)
+   TriggerServerEvent("GTA_Inventaire:RemoveItem", item_name, itemid, qty)
 end)
 
 
 --[=====[
-        Permet d'ajouter un item dans votre inventaire :
+        Permet d'ajouter un item dans votre inventaire server-side exemple :
 		Utilisation : TriggerClientEvent("GTA_Inventaire:AjouterItem", item_name, qty)
 ]=====]
 RegisterNetEvent("GTA_Inventaire:AjouterItem")
 AddEventHandler("GTA_Inventaire:AjouterItem", function(item_name, qty)
-   TriggerServerEvent("GTA:ReceiveItem", item_name, qty)
+   TriggerServerEvent("GTA_Inventaire:ReceiveItem", item_name, qty)
 end)

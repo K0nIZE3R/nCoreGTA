@@ -116,7 +116,7 @@ RegisterNetEvent("GTA_Medic:DeposerArgentPropreStockage")
 AddEventHandler("GTA_Medic:DeposerArgentPropreStockage", function(qty)
     local source = source
 
-    TriggerEvent('GTA:GetItemQty', source, "cash", function(qtyItem, itemid)
+    TriggerEvent('GTA_Inventaire:GetItemQty', source, "cash", function(qtyItem, itemid)
         if (qtyItem >= qty) then 
             MySQL.Async.fetchAll('SELECT argent FROM gta_medic_stockage',{}, function(res)
                 local argentPropre = res[1].argent + qty
@@ -134,7 +134,7 @@ RegisterNetEvent("GTA_Medic:DeposerArgentSaleStockage")
 AddEventHandler("GTA_Medic:DeposerArgentSaleStockage", function(qty)
     local source = source
 
-    TriggerEvent('GTA:GetItemQty', source, "dirty", function(qtyItem, itemid)
+    TriggerEvent('GTA_Inventaire:GetItemQty', source, "dirty", function(qtyItem, itemid)
         if (qtyItem >= qty) then 
             MySQL.Async.fetchAll('SELECT argent_sale FROM gta_medic_stockage',{}, function(res)
                 local argentSale = res[1].argent_sale + qty

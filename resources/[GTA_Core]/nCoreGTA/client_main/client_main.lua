@@ -55,7 +55,7 @@ AddEventHandler("GTA:SpawnPlayer", function()
         GetDepartItemList()
         TriggerEvent("GTA:BeginCreation")
         for _, v in pairs(departItemList) do
-            TriggerServerEvent("GTA:ReceiveItem", v.name, v.qty)
+            TriggerServerEvent("GTA_Inventaire:ReceiveItem", v.name, v.qty)
         end
     end
 

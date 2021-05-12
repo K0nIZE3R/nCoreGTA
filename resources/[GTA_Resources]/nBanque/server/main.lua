@@ -27,7 +27,7 @@ end)
 RegisterServerEvent('nBanqueSolde:PermissionDABanque')
 AddEventHandler('nBanqueSolde:PermissionDABanque', function(somme)
 	local source = source 
-	TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+	TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
 		if(tonumber(qtyArgentPropre) >= tonumber(somme)) then 
 			TriggerClientEvent("GTA_Banque:ClientDeposerArgentBanque", source, "cash", itemid, somme)
         else

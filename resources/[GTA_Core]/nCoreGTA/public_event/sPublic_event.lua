@@ -6,6 +6,10 @@ end
 
 --[=====[
     	Cette event est utilisé pour récuperer le sex de votre perso : 
+		Cette event est utilisé server-side exemple : 
+		TriggerEvent('GTA:GetUserSex', license, function(sex)
+			print(sex) --> return votre sex.
+		end)
 ]=====]
 RegisterNetEvent('GTA:GetUserSex')  --> cette event sert uniquement a get la quantité d'un item server-side.
 AddEventHandler('GTA:GetUserSex', function(license, callback)
@@ -36,6 +40,8 @@ end)
 
 --[=====[
     	Cette event est utilisé pour update les nouvel donnée "faim" du joueur : 
+		Cette event est utilisé client-side exemple :
+		TriggerServerEvent("nSetFaim", nombre)
 ]=====]
 RegisterNetEvent("nSetFaim")
 AddEventHandler("nSetFaim", function(faim)
@@ -45,6 +51,8 @@ end)
 
 --[=====[
     	Cette event est utilisé pour update les nouvel donnée "soif" du joueur : 
+		Cette event est utilisé client-side exemple :
+		TriggerServerEvent("nSetSoif", nombre)
 ]=====]
 RegisterNetEvent("nSetSoif")
 AddEventHandler("nSetSoif", function(soif)
@@ -55,7 +63,13 @@ end)
 
 
 --[=====[
-    	Cette event est utile pour sauvegarde la pos du joueur : 
+    	Cette event est utile pour sauvegardé la pos du joueur : 
+		Cette event est utilisé client-side exemple : 
+		--[[
+			local pPed = GetPlayerPed(-1)
+			local pCoords = GetEntityCoords(pPed)
+			TriggerServerEvent("GTA:SavePos", pCoords)
+		]]--
 ]=====]
 RegisterNetEvent("GTA:SavePos")
 AddEventHandler("GTA:SavePos", function(pos)
@@ -66,7 +80,9 @@ end)
 
 
 --[=====[
-    	Cette event est utilisé pour le changement d'identité :
+    	Cette event est utile pour le changement d'identité :
+		Cette event est utilisé client-side exemple : 
+    	TriggerServerEvent("GTA:UpdateIdentiter", "nom", "prenom", age, "origine")
 ]=====]
 RegisterNetEvent("GTA:UpdateIdentiter")
 AddEventHandler("GTA:UpdateIdentiter", function(nom, prenom, age, origine)
@@ -88,12 +104,13 @@ end)
 
 
 --[=====[
-    	Cette event vous retourne les informations de votre player ou target utile pour afficher les info de la carte d'identité :
+	Cette event vous retourne les informations de votre player utile pour afficher les info de la carte d'identité :
+	Cette event est utilisé client-side exemple : 
+	TriggerServerEvent("GTA:GetPlayerInformationsIdentiter") --> return l'identité de votre player puis vous l'affiche pour vous.
 ]=====]
 RegisterNetEvent("GTA:GetPlayerInformationsIdentiter")
-AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
+AddEventHandler("GTA:GetPlayerInformationsIdentiter", function()
 	local source = source
-	local targetP = source or target
 	local t = { 
 		["nom"] = PlayersSource[source].identiter.nom,
 		["prenom"] = PlayersSource[source].identiter.prenom,
@@ -103,17 +120,15 @@ AddEventHandler("GTA:GetPlayerInformationsIdentiter", function(target)
 		["telephone"] = PlayersSource[source].phone_number
 	}
 
-	if (target ~= nil) then
-		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
-		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
-	end
-	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", targetP, t)
+	TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", source, t)
 end)
 
 
 
 --[=====[
-    	Cette event vous retourne les informations de votre player ou target utile pour afficher les info de la carte d'identité :
+		Cette event vous retourne les informations de votre player utile pour afficher les info de la carte d'identité a une target proche de vous :
+		Cette event est utilisé client-side exemple : 
+		TriggerServerEvent("GTA:GetPlayerInformationsIdentiter", target) --> return l'identité de votre player puis vous l'affiche au target le plus proche.
 ]=====]
 RegisterNetEvent("GTA:GetPlayerInformationsIdentiterTarget")
 AddEventHandler("GTA:GetPlayerInformationsIdentiterTarget", function(target)
@@ -129,12 +144,10 @@ AddEventHandler("GTA:GetPlayerInformationsIdentiterTarget", function(target)
 		["telephone"] = PlayersSource[source].phone_number,
 	}
 
-	if (target ~= nil) then
-		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
-		TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
-	end
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", target)
+	TriggerClientEvent("GTA_Inv:ReceiveItemAnim", source)
 	
-	getSourceFromIdentifier(license, function(osou)
+	getSourceFromIdentifier(license, function(osou) --> permet de get la source id de la target.
 		if tonumber(osou) ~= nil then 
 			TriggerClientEvent("GTA_Interaction:UpdateInfoPlayersIdentiter", target, t, tonumber(osou))
 		end
@@ -158,6 +171,10 @@ end
 
 --[=====[
     	cette event sert uniquement a get l'argent de banque utile pour faire des condition avant vos achat ou autre.
+		Cette event est utilisé server-side exemple : 
+		TriggerEvent("GTA:GetArgentBanque", source, function(qty)
+			print(qty) --> Vous retourne la qty d'argent en banque.
+		end)
 ]=====]
 RegisterServerEvent('GTA:GetArgentBanque')
 AddEventHandler('GTA:GetArgentBanque', function(source, callback)
@@ -167,7 +184,11 @@ end)
 
 
 --[=====[
-    	cette event sert uniquement a get l'identiter de votre player server-side :
+    	cette event sert uniquement a get l'identiter de votre player :
+		Cette event est utilisé server-side exemple : 
+		TriggerEvent("GTA:GetIdentityPlayer", source, function(data)
+			print(data["nom"], data["prenom"], data["age"], data["origine"], data["origine"], data["profession"], data["telephone"]) --> Vous retourne les valeur de vos info.
+		end)
 ]=====]
 RegisterServerEvent('GTA:GetIdentityPlayer')
 AddEventHandler('GTA:GetIdentityPlayer', function(source, callback)
@@ -177,14 +198,16 @@ AddEventHandler('GTA:GetIdentityPlayer', function(source, callback)
 		["age"] = PlayersSource[source].identiter.age,
 		["origine"] = PlayersSource[source].identiter.origine,
 		["profession"] = PlayersSource[source].job,
-		["telephone"] = PlayersSource[source].phone_number,
+		["telephone"] = PlayersSource[source].phone_number
 	}
 	callback(t)
 end)
 
 
 --[=====[
-    	cette event sert uniquement a faire des paiement avec votre argent propre a utilisé [client-side]:
+    	cette event sert uniquement a faire des paiement avec votre argent propre a utilisé :
+		Cette event est utilisé client-side exemple : 
+		TriggerServerEvent("GTA:PaiementCash", itemname, itemid, prix)
 ]=====]
 RegisterServerEvent('GTA:PaiementCash')
 AddEventHandler('GTA:PaiementCash', function(item, itemid, count)
@@ -206,6 +229,8 @@ end)
 
 --[=====[
     	cette event sert uniquement a update votre job :
+		Cette event est utilisé client-side exemple : 
+		TriggerServerEvent("GTA_Metier:UpdateJob", nom_metier, grade, bService)
 ]=====]
 RegisterServerEvent('GTA_Metier:UpdateJob')
 AddEventHandler('GTA_Metier:UpdateJob', function(metiers, grade, service)

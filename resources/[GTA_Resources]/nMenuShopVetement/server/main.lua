@@ -4,7 +4,7 @@ AddEventHandler("GTA_Vetement:NouveauTshirt", function(drawID, couleurID, prix, 
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -29,7 +29,7 @@ AddEventHandler("GTA_Vetement:NouveauPull", function(drawID, couleurID, prix, to
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -53,7 +53,7 @@ AddEventHandler("GTA_Vetement:NouvelVeste", function(drawID, couleurID, prix, to
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -77,7 +77,7 @@ AddEventHandler("GTA_Vetement:NouveauPantalon", function(drawID, couleurID, prix
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -98,7 +98,7 @@ AddEventHandler("GTA_Vetement:NouvelChaussure", function(drawID, couleurID, prix
     prix = prix or 0
     local source = source	
     local player = GetPlayerIdentifiers(source)[1]
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -120,7 +120,7 @@ AddEventHandler("GTA_Vetement:NouveauBonnet", function(drawID, prix)
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 
@@ -141,7 +141,7 @@ AddEventHandler("GTA_Vetement:NouveauAccessoire", function(drawID, prix)
     local source = source	
     local license = GetPlayerIdentifiers(source)[1]
 
-    TriggerEvent("GTA:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
+    TriggerEvent("GTA_Inventaire:GetItemQty", source, "cash", function(qtyArgentPropre, itemid)
         if (qtyArgentPropre >= prix) then 
             TriggerClientEvent("GTA_Vetement:PaiementAccepter", source, itemid, prix)
 

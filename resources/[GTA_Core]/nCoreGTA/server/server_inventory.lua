@@ -8,9 +8,11 @@ end
 
 --[=====[
     	Permet de rename un item de votre inventaire : 
+        Cette event est utilisé client-side exemple : 
+        TriggerServerEvent("GTA_Inventaire:RenameItem", item_name, new_name, itemid)
 ]=====]
-RegisterNetEvent("GTA:RenameItem")
-AddEventHandler("GTA:RenameItem", function(item_name, newLabel, itemid) 
+RegisterNetEvent("GTA_Inventaire:RenameItem")
+AddEventHandler("GTA_Inventaire:RenameItem", function(item_name, newLabel, itemid) 
     local source = source
     PlayersSource[source].inventaire[itemid].label = newLabel
         
@@ -21,9 +23,11 @@ end)
 
 --[=====[
     	Permet de retirer un item de votre inventaire ou target :
+        Cette event est utilisé client-side exemple : 
+        TriggerServerEvent("GTA_Inventaire:RemoveItem", item_name, itemid, qty)
 ]=====]
-RegisterNetEvent("GTA:RemoveItem")
-AddEventHandler("GTA:RemoveItem", function(item, itemid, count) 
+RegisterNetEvent("GTA_Inventaire:RemoveItem")
+AddEventHandler("GTA_Inventaire:RemoveItem", function(item, itemid, count) 
     local source = source
     if items[item] ~= nil then
         if PlayersSource[source].inventaire[itemid] ~= nil then -- Item do not exist in inventory
@@ -40,10 +44,14 @@ end)
 
 
 --[=====[
-    Permet de get la qty d'item que vous avez sur vous :
+    Permet de get la qty d'item que vous avez sur vous utilisé cette event server-side : 
+    exemple :
+     TriggerEvent('GTA_Inventaire:GetItemQty', source, "dirty", function(qtyItem, itemid)
+        print(qtyItem, itemid) --> Le premier parametre return la qty de l'item le deuxieme parametre return l'id unique de l'item.
+    end)
 ]=====]
-RegisterNetEvent("GTA:GetItemQty")
-AddEventHandler("GTA:GetItemQty", function(source, item_name, callback)
+RegisterNetEvent("GTA_Inventaire:GetItemQty")
+AddEventHandler("GTA_Inventaire:GetItemQty", function(source, item_name, callback)
     if items[item_name] ~= nil then
         for _,v in pairs(PlayersSource[source].inventaire) do
             if v.item == item_name then
@@ -56,9 +64,11 @@ end)
 
 --[=====[
     Permet de recevoir un item :
+    Cette event est utilisé coté client-side exemple : 
+    TriggerServerEvent("GTA_Inventaire:ReceiveItem", "cash", 1) --> le premier parametre doit être le nom de l'item, le deuxieme la quantité.
 ]=====]
-RegisterNetEvent("GTA:ReceiveItem")
-AddEventHandler("GTA:ReceiveItem", function(item, count, args) 
+RegisterNetEvent("GTA_Inventaire:ReceiveItem")
+AddEventHandler("GTA_Inventaire:ReceiveItem", function(item, count, args) 
     local count = count or 1
     local src = source
     if items[item] ~= nil then
@@ -92,9 +102,11 @@ end)
 
 --[=====[
     Permet de give un item a un player:
+    Cette event est utilisé client-side exemple :
+    TriggerServerEvent("GTA_Inventaire:GiveItem", target, "nom de l'item", id_unique, qty)
 ]=====]
-RegisterNetEvent("GTA:GiveItem")
-AddEventHandler("GTA:GiveItem", function(target, item, itemid, count, args) 
+RegisterNetEvent("GTA_Inventaire:GiveItem")
+AddEventHandler("GTA_Inventaire:GiveItem", function(target, item, itemid, count, args) 
     local src = source
     if items[item] ~= nil then
         local tWeight = GetInvWeight(PlayersSource[target].inventaire)
@@ -143,22 +155,9 @@ AddEventHandler("GTA:GiveItem", function(target, item, itemid, count, args)
 end)
 
 
---[[ 
-    Permet de savoir si l'item existe dans la liste des items, si vrais il retourne "l'id" de l'item :
-]]--
-RegisterNetEvent("GTA_Inventaire:DoesItemExist")
-AddEventHandler("GTA_Inventaire:DoesItemExist", function(source, item, callback) 
-    for _,v in pairs(PlayersSource[source].inventaire) do
-        if v.item == item then
-            callback(v.itemId) 
-        end
-    end
-end)
-
-
 
 --[[ 
-return generated item id
+generated unique item id
 ]]--
 function GenerateItemId()
     return ""..tostring(math.random(100001,900009)).."-"..tostring(math.random(100001,900009)).."-"..tostring(math.random(100001,900009))

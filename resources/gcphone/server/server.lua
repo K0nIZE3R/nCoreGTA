@@ -6,7 +6,7 @@
 RegisterNetEvent("GTA_Phone:RequestOpenPhone")
 AddEventHandler("GTA_Phone:RequestOpenPhone", function(canOpen) 
     local source = source
-    TriggerEvent('GTA:GetItemQty', source, "phone", function(qtyItem, itemid)
+    TriggerEvent('GTA_Inventaire:GetItemQty', source, "phone", function(qtyItem, itemid)
         if (qtyItem > 0) then 
             canOpen = true
         else

@@ -123,11 +123,11 @@ AddEventHandler("GTA_Garage:IsPlayerHaveCles", function(VehId, bHaveKey)
         local lockStatus = GetVehicleDoorLockStatus(VehId)
 
         if lockStatus == 1 then
-            SetVehicleDoorsLocked(VehId, 1)
+            SetVehicleDoorsLocked(VehId, 2)
             PlayVehicleDoorCloseSound(VehId, 1)
             TriggerEvent("NUI-Notification", {"Véhicule vérrouillé"})
         elseif lockStatus == 2 then
-            SetVehicleDoorsLocked(VehId, 2)
+            SetVehicleDoorsLocked(VehId, 1)
             PlayVehicleDoorOpenSound(VehId, 0)
             TriggerEvent("NUI-Notification", {"Véhicule dévérrouillé"})
         end
